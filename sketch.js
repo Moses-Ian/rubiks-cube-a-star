@@ -1,10 +1,21 @@
 let cubeSize = 3;
 let cube = new Array(cubeSize);
 let len = 50;
+let offset = (cubeSize - 1) / 2;
+
+// up, down, right, left, front, back
+let colors;
 
 function setup() {
 	let canvas = createCanvas(400, 400, WEBGL);
 	canvas.parent('sketch-container');
+	
+	// create the colors
+	colors = [
+		color('white'), color('yellow'),
+		color('orange'), color('red'),
+		color('blue'), color('green')
+	];
 	
 	// create the cube
 	for(let i=0; i<cubeSize; i++) {
@@ -12,7 +23,7 @@ function setup() {
 		for(let j=0; j<cubeSize; j++) {
 			cube[i][j] = new Array(cubeSize);
 			for(let k=0; k<cubeSize; k++) {
-				cube[i][j][k] = new Box((i-1)*len, (j-1)*len, (k-1)*len, len);
+				cube[i][j][k] = new Box((i-offset)*len, (j-offset)*len, (k-offset)*len, len);
 			}
 		}
 	}
@@ -30,8 +41,20 @@ function draw() {
 	camera(cameraPos.x, cameraPos.y, cameraPos.z, 0, 0, 0, 0, 1, 0);
 
 	// light
-	ambientLight(100);
-	directionalLight(255, 255, 255, 0, 1, 0);
+	ambientLight(255);
+	// directionalLight(255, 255, 255, 0, 1, 0);
+	
+	// material
+	// normalMaterial();
+	
+	// beginShape();
+	
+	// vertex(0,0);
+	// vertex(100, 0);
+	// vertex(100, 100);
+	// vertex(0, 100);
+	
+	// endShape(CLOSE);
 	
 	// show the cube
 	for(let i=0; i<cubeSize; i++) {
