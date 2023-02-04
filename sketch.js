@@ -1,4 +1,4 @@
-let cubeSize = 3;
+let cubeSize = 3;	// must be odd
 let cube = new Array(cubeSize);
 let len = 50;
 let offset = (cubeSize - 1) / 2;
@@ -14,7 +14,7 @@ function setup() {
 	colors = [
 		color('white'), color('yellow'),
 		color('orange'), color('red'),
-		color('blue'), color('green')
+		color('green'), color('blue')
 	];
 	
 	// create the cube
@@ -23,14 +23,24 @@ function setup() {
 		for(let j=0; j<cubeSize; j++) {
 			cube[i][j] = new Array(cubeSize);
 			for(let k=0; k<cubeSize; k++) {
-				cube[i][j][k] = new Box((i-offset)*len, (j-offset)*len, (k-offset)*len, len);
+				cube[i][j][k] = new Box(
+					(i-offset)*len, (j-offset)*len, (k-offset)*len, 
+					i-offset, j-offset, k-offset, 
+					len
+				);
 			}
 		}
 	}
+	
 }
 
 function draw() {
 	background(175);
+	
+	// do things
+	// turnX(1, -.05);
+	// turnY(1, -.05);
+	turnZ(1, -.05);
 
 	// camera
 	let cameraX = map(mouseX, 0, width, 200, -200);
@@ -61,6 +71,36 @@ function draw() {
 		for(let j=0; j<cubeSize; j++) {
 			for(let k=0; k<cubeSize; k++) {
 				cube[i][j][k].show();
+			}
+		}
+	}
+}
+
+function turnX(index, angle) {
+	for(let i=0; i<cubeSize; i++) {
+		for(let j=0; j<cubeSize; j++) {
+			for(let k=0; k<cubeSize; k++) {
+				cube[i][j][k].turnX(index, angle);
+			}
+		}
+	}
+}
+
+function turnY(index, angle) {
+	for(let i=0; i<cubeSize; i++) {
+		for(let j=0; j<cubeSize; j++) {
+			for(let k=0; k<cubeSize; k++) {
+				cube[i][j][k].turnY(index, angle);
+			}
+		}
+	}
+}
+
+function turnZ(index, angle) {
+	for(let i=0; i<cubeSize; i++) {
+		for(let j=0; j<cubeSize; j++) {
+			for(let k=0; k<cubeSize; k++) {
+				cube[i][j][k].turnZ(index, angle);
 			}
 		}
 	}
