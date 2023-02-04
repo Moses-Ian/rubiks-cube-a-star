@@ -4,12 +4,15 @@
   "description": "An A* algorithm for solving a Rubik's Cube",
   "scripts": {
     "start": "browser-sync start --server -f -w",
-		"deploy": "gh-pages -d ."
-	},
+    "deploy": "gh-pages -d ."
+  },
   "keywords": [],
   "author": "Ian Moses",
   "license": "ISC",
   "devDependencies": {
-    "gh-pages": "^4.0.0"
+    "gh-pages": "^4.0.0",
+    "browser-sync": "^2.27.11"
+  },
+  "dependencies": {
   }
 }
