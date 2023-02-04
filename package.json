@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An A* algorithm for solving a Rubik's Cube",
   "scripts": {
-    "start": "browser-sync start --server -f -w",
+    "start": "five-server . -p 8000",
     "deploy": "gh-pages -d ."
   },
   "keywords": [],
@@ -11,7 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "gh-pages": "^4.0.0",
-    "browser-sync": "^2.27.11"
+    "five-server": "^0.1.9"
   },
   "dependencies": {
   }
