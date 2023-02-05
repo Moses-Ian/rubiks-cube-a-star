@@ -24,33 +24,31 @@ const orbit = new OrbitControls(camera, renderer.domElement);
 orbit.update();
 
 // add a cube
-// const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
-// const cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
 let rubik = new Rubik();
 rubik.addToScene(scene);
+
+// key dictionary
+let turns = new Object();
+turns[','] = new Turn('y',   1);
+turns['o'] = new Turn('y',  -1);
+turns['a'] = new Turn('x',  -1);
+turns['e'] = new Turn('x',   1);
+turns['p'] = new Turn('z',  -1);
+turns['u'] = new Turn('z',   1);
+turns['<'] = new Turn('-y',  1);
+turns['O'] = new Turn('-y', -1);
+turns['A'] = new Turn('-x', -1);
+turns['E'] = new Turn('-x',  1);
+turns['P'] = new Turn('-z', -1);
+turns['U'] = new Turn('-z',  1);
 
 // define the animation loop
 function animate() {
 	requestAnimationFrame( animate );
 	
-	// cube.rotation.x += 0.01;
-	// cube.rotation.y += 0.01;	
-	// rubik.rotate();
 	// do things
 	if (turn.framesLeft > 0) {
-		switch (turn.direction) {
-			case 'x':
-				rubik.turn(turn.direction, turn.index);
-				break;
-			case 'y':
-				rubik.turn(turn.direction, turn.index);
-				break;
-			case 'z':
-				rubik.turn(turn.direction, turn.index);
-				break;
-		}
+		rubik.turn(turn.direction, turn.index);
 		turn.framesLeft--;
 		if (turn.framesLeft == 0)
 			rubik.updateCube();
@@ -64,31 +62,7 @@ function animate() {
 document.onkeydown = e => {
 	if (turn.framesLeft > 0)
 		return;
-	if (e.key == ',') {
-		turn = new Turn('y', 1);
-		return;
-	}
-	if (e.key == 'o') {
-		turn = new Turn('y', -1);
-		return;
-	}
-	if (e.key == 'a') {
-		turn = new Turn('x', -1);
-		return;
-	}
-	if (e.key == 'e') {
-		turn = new Turn('x', 1);
-		return;
-	}
-	if (e.key == 'p') {
-		turn = new Turn('z', -1);
-		return;
-	}
-	if (e.key == 'u') {
-		turn = new Turn('z', 1);
-		return;
-	}
-		
+	turn = turns[e.key]?.start() || turn;
 }
 
 

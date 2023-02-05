@@ -1,3 +1,23 @@
+/*
+Note to myself in the future because I WILL forget how static functions work:
+
+I might eventually try to display a lot of these on screen at once, and it is between 14% - 61% as memory intensive to use static functions.
+
+To use static functions, you can just say myBox.myFunction().
+You have to say Box.myFunction.call().
+
+In rubik.js, I do something slightly crazier.
+Remember that Box[myFunction] is equivalent to Box.myfunction, except that now you can use a variable, e.g.
+let myMysteriousFunction = 'myFunction';
+Box[myMysteriousFunction].call();
+
+With this setup, I can display 100 cubes and have them rotate only slightly faster than with instance methods.
+
+*/
+
+
+
+
 import * as THREE from 'three';
 import { turnSpeed } from './turn.js';
 
@@ -84,7 +104,7 @@ class Box {
 		
 	}
 	
-	turnX(index) {
+	static turnX(index) {
 		if (this.oldIndex.x == index) {
 			let temp = new THREE.Vector2(this.pos.y, this.pos.z)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -102,7 +122,7 @@ class Box {
 			
 	}
 	
-	turnY(index) {
+	static turnY(index) {
 		if (this.oldIndex.y == index) {
 			let temp = new THREE.Vector2(this.pos.x, this.pos.z)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -119,7 +139,7 @@ class Box {
 		}
 	}
 	
-	turnZ(index) {
+	static turnZ(index) {
 		if (this.oldIndex.z == index) {
 			let temp = new THREE.Vector2(this.pos.x, this.pos.y)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -136,11 +156,63 @@ class Box {
 		}
 	}
 	
-	turn(axis) {
-		this.group.rotateOnWorldAxis(axis, turnSpeed);
+	static turnNegX(index) {
+		if (this.oldIndex.x == index) {
+			let temp = new THREE.Vector2(this.pos.y, this.pos.z)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.pos = new THREE.Vector3(this.pos.x, temp.x, temp.y);	// this is confusing -> remember that temp is 2D and pos is 3D
+			this.group.position.x = this.pos.x;
+			this.group.position.y = this.pos.y;
+			this.group.position.z = this.pos.z;
+			
+			temp = new THREE.Vector2(this.index.y, this.index.z)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			this.turn(X3D, -turnSpeed);
+		}	
+			
 	}
 	
-	update() {
+	static turnNegY(index) {
+		if (this.oldIndex.y == index) {
+			let temp = new THREE.Vector2(this.pos.x, this.pos.z)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.pos = new THREE.Vector3(temp.x, this.pos.y, temp.y);
+			this.group.position.x = this.pos.x;
+			this.group.position.y = this.pos.y;
+			this.group.position.z = this.pos.z;
+			
+			temp = new THREE.Vector2(this.index.x, this.index.z)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			this.turn(Y3D, -turnSpeed);
+		}
+	}
+	
+	static turnNegZ(index) {
+		if (this.oldIndex.z == index) {
+			let temp = new THREE.Vector2(this.pos.x, this.pos.y)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.pos = new THREE.Vector3(temp.x, temp.y, this.pos.z);
+			this.group.position.x = this.pos.x;
+			this.group.position.y = this.pos.y;
+			this.group.position.z = this.pos.z;
+			
+			temp = new THREE.Vector2(this.index.x, this.index.y)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			this.turn(Z3D, -turnSpeed);
+		}
+	}
+	
+	turn(axis, angle = turnSpeed) {
+		this.group.rotateOnWorldAxis(axis, angle);
+	}
+	
+	static update() {
 		this.group.position.round();
 		this.pos = this.group.position;
 		this.index.round();
