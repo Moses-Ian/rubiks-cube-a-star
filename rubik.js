@@ -143,4 +143,4 @@ class Rubik {
 	}
 }
 
-export {Rubik};
+export {Rubik, len};

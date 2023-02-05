@@ -38,10 +38,10 @@ const Z3D = new THREE.Vector3(0, 0, 1);
 class Box {
 	
 	constructor(posX, posY, posZ, indexX, indexY, indexZ, len) {
-		this.pos = new THREE.Vector3(posX, posY, posZ);
 		this.index = new THREE.Vector3(indexX, indexY, indexZ);
 		this.oldIndex = this.index;
 		this.len = len;
+		this.pos = this.index.clone().multiplyScalar(this.len);
 		this.rotation = new THREE.Vector3(0, 0, 0);
 		
 		this.planes = new Array(6);
@@ -106,16 +106,11 @@ class Box {
 	
 	static turnX(index) {
 		if (this.oldIndex.x == index) {
-			let temp = new THREE.Vector2(this.pos.y, this.pos.z)
-				.rotateAround(ZERO2D, turnSpeed);
-			this.pos = new THREE.Vector3(this.pos.x, temp.x, temp.y);	// this is confusing -> remember that temp is 2D and pos is 3D
-			this.group.position.x = this.pos.x;
-			this.group.position.y = this.pos.y;
-			this.group.position.z = this.pos.z;
-			
-			temp = new THREE.Vector2(this.index.y, this.index.z)
+			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			this.updatePos();
 			
 			this.turn(X3D);
 		}	
@@ -124,16 +119,11 @@ class Box {
 	
 	static turnY(index) {
 		if (this.oldIndex.y == index) {
-			let temp = new THREE.Vector2(this.pos.x, this.pos.z)
-				.rotateAround(ZERO2D, turnSpeed);
-			this.pos = new THREE.Vector3(temp.x, this.pos.y, temp.y);
-			this.group.position.x = this.pos.x;
-			this.group.position.y = this.pos.y;
-			this.group.position.z = this.pos.z;
-			
-			temp = new THREE.Vector2(this.index.x, this.index.z)
+			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			this.updatePos();
 			
 			this.turn(Y3D);
 		}
@@ -141,16 +131,11 @@ class Box {
 	
 	static turnZ(index) {
 		if (this.oldIndex.z == index) {
-			let temp = new THREE.Vector2(this.pos.x, this.pos.y)
-				.rotateAround(ZERO2D, turnSpeed);
-			this.pos = new THREE.Vector3(temp.x, temp.y, this.pos.z);
-			this.group.position.x = this.pos.x;
-			this.group.position.y = this.pos.y;
-			this.group.position.z = this.pos.z;
-			
-			temp = new THREE.Vector2(this.index.x, this.index.y)
+			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			this.updatePos();
 			
 			this.turn(Z3D);
 		}
@@ -158,16 +143,11 @@ class Box {
 	
 	static turnNegX(index) {
 		if (this.oldIndex.x == index) {
-			let temp = new THREE.Vector2(this.pos.y, this.pos.z)
-				.rotateAround(ZERO2D, -turnSpeed);
-			this.pos = new THREE.Vector3(this.pos.x, temp.x, temp.y);	// this is confusing -> remember that temp is 2D and pos is 3D
-			this.group.position.x = this.pos.x;
-			this.group.position.y = this.pos.y;
-			this.group.position.z = this.pos.z;
-			
-			temp = new THREE.Vector2(this.index.y, this.index.z)
+			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -turnSpeed);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			this.updatePos();
 			
 			this.turn(X3D, -turnSpeed);
 		}	
@@ -176,16 +156,11 @@ class Box {
 	
 	static turnNegY(index) {
 		if (this.oldIndex.y == index) {
-			let temp = new THREE.Vector2(this.pos.x, this.pos.z)
-				.rotateAround(ZERO2D, -turnSpeed);
-			this.pos = new THREE.Vector3(temp.x, this.pos.y, temp.y);
-			this.group.position.x = this.pos.x;
-			this.group.position.y = this.pos.y;
-			this.group.position.z = this.pos.z;
-			
-			temp = new THREE.Vector2(this.index.x, this.index.z)
+			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -turnSpeed);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			this.updatePos();
 			
 			this.turn(Y3D, -turnSpeed);
 		}
@@ -193,16 +168,11 @@ class Box {
 	
 	static turnNegZ(index) {
 		if (this.oldIndex.z == index) {
-			let temp = new THREE.Vector2(this.pos.x, this.pos.y)
-				.rotateAround(ZERO2D, -turnSpeed);
-			this.pos = new THREE.Vector3(temp.x, temp.y, this.pos.z);
-			this.group.position.x = this.pos.x;
-			this.group.position.y = this.pos.y;
-			this.group.position.z = this.pos.z;
-			
-			temp = new THREE.Vector2(this.index.x, this.index.y)
+			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -turnSpeed);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			this.updatePos();
 			
 			this.turn(Z3D, -turnSpeed);
 		}
@@ -210,6 +180,13 @@ class Box {
 	
 	turn(axis, angle = turnSpeed) {
 		this.group.rotateOnWorldAxis(axis, angle);
+	}
+	
+	updatePos() {
+		this.pos = this.index.clone().multiplyScalar(this.len);
+		this.group.position.x = this.pos.x;
+		this.group.position.y = this.pos.y;
+		this.group.position.z = this.pos.z;
 	}
 	
 	static update() {

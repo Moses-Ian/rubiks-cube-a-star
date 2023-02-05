@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/addons/OrbitControls.js';
 import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
 import { Turn } from './turn.js';
+import { solve } from './solve.js';
 
 let width = 400;
 let height = 400;
@@ -28,9 +29,13 @@ rubik.addToScene(scene);
 
 // gui
 const gui = new dat.GUI();
-const options = { Shuffle: () => rubik.shuffle()};
+const options = { 
+	Shuffle: () => rubik.shuffle(),
+	Solve: () => solve(rubik)
+};
 
 gui.add(options,'Shuffle');
+gui.add(options,'Solve');
 
 // define the animation loop
 function animate() {
