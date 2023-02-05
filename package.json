@@ -10,9 +10,7 @@
   "author": "Ian Moses",
   "license": "ISC",
   "devDependencies": {
-    "gh-pages": "^4.0.0",
-    "five-server": "^0.1.9"
-  },
-  "dependencies": {
+    "five-server": "^0.1.9",
+    "gh-pages": "^4.0.0"
   }
 }

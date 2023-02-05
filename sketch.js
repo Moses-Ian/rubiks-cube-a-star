@@ -1,3 +1,6 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/OrbitControls.js';
+
 let width = 400;
 let height = 400;
 
@@ -9,14 +12,16 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
 document.body.appendChild( renderer.domElement );
 
-// add a cube
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
-
 // set camera position
 camera.position.z = 5;
+const orbit = new OrbitControls(camera, renderer.domElement);
+orbit.update();
+
+// add a cube
+const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+const material = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
+const cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
 
 // define the animation loop
 function animate() {
