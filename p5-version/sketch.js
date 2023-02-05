@@ -3,7 +3,8 @@ let cube = new Array(cubeSize);
 let len = 50;
 let offset = (cubeSize - 1) / 2;
 let turnFrames = 30;
-let turnSpeed;	
+let turnSpeed;
+let space = 10;
 
 // up, down, right, left, front, back
 let colors;
@@ -40,7 +41,7 @@ function setup() {
 			cube[i][j] = new Array(cubeSize);
 			for(let k=0; k<cubeSize; k++) {
 				cube[i][j][k] = new Box(
-					(i-offset)*len, (j-offset)*len, (k-offset)*len, 
+					(i-offset)*len + space*i, (j-offset)*len + space*j, (k-offset)*len + space*k, 
 					i-offset, j-offset, k-offset, 
 					len
 				);

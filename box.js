@@ -71,6 +71,12 @@ class Box {
 		geo = new THREE.EdgesGeometry( geometry );
 		this.outlines[5] = new THREE.LineSegments( geo, mat );
 		
+		this.group = new THREE.Group();
+		this.planes.forEach(plane => this.group.add(plane));
+		this.outlines.forEach(outline => this.group.add(outline));
+		
+		this.group.position.set(this.pos.x, this.pos.y, this.pos.z);
+		
 	}
 	
 	turnX(index) {
@@ -358,8 +364,7 @@ class Box {
 	}
 
 	addToScene(scene) {
-		this.planes.forEach(plane => scene.add(plane));
-		this.outlines.forEach(outline => scene.add(outline));
+		scene.add(this.group);
 	}
 }
 
