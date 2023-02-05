@@ -1,9 +1,53 @@
 import { Rubik } from './rubik.js';
 import { IdealizedRubik } from './idealizedRubik.js';
 
+// optional parameters
+const ATTACH_TO_WINDOW = true;
+const cubeSize = 3;
+
+// important values
+const endRubik = IdealizedRubik.solution(cubeSize);
+
 function solve(r) {
 	console.log('solve');
-	let rubik = new IdealizedRubik(r);
+	
+	// create the sets
+	let openSet = [];
+	let closedSet = [];
+	if (ATTACH_TO_WINDOW) {
+		window.openSet = openSet;
+		window.closedSet = closedSet;
+	}
+	
+	// get started
+	let startRubik = new IdealizedRubik(r);
+	openSet.push(startRubik);
+	
+	// escape!
+	let i=0;
+
+	// while open set is not empty
+	while(openSet.length) {
+		
+		//find the lowest f
+		//if we have a lot of cubes in the openset, this should be priority queue
+		let lowestRubik = openSet[0];
+		openSet.forEach(rubik => {
+			if (rubik.f < lowestRubik.f) 
+				lowestRubik = rubik;
+		});
+		
+		if (lowestRubik.equals(endRubik)) {
+			console.log('done');
+		}
+		
+		
+		
+		i++;
+		if (i == 1)
+			break;
+	}
+	
 }
 
 export {solve};
