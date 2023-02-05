@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { turnSpeed } from './turn.js';
 
 const colors = [
 	new THREE.Color('white'), new THREE.Color('yellow'),
@@ -8,6 +9,8 @@ const colors = [
 
 const PI = Math.PI;
 const HALF_PI = Math.PI / 2;
+
+const ZERO2D = new THREE.Vector2(0, 0);
 	
 class Box {
 	
@@ -81,96 +84,95 @@ class Box {
 	
 	turnX(index) {
 		if (this.oldIndex.x == index) {
-			let temp = new THREE.Vector3(this.pos.y, this.pos.z).rotate(turnSpeed);
+			let temp = new THREE.Vector2(this.pos.y, this.pos.z)
+				.rotateAround(ZERO2D, turnSpeed);
 			this.pos = new THREE.Vector3(this.pos.x, temp.x, temp.y);	// this is confusing -> remember that temp is 2D and pos is 3D
+			// this.group.position.set(this.pos);
+			this.group.position.x = this.pos.x;
+			this.group.position.y = this.pos.y;
+			this.group.position.z = this.pos.z;
 			
-			temp = new THREE.Vector3(this.index.y, this.index.z).rotate(turnSpeed);
+			temp = new THREE.Vector2(this.index.y, this.index.z)
+				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
 			
-			this.rotation = this.turn(new THREE.Vector3(1, 0, 0));
+			// this.rotation = this.turn(new THREE.Vector3(1, 0, 0));
 			
-			this.normal = new THREE.Vector3(
-				this.normal.x,
-				this.normal.y * cos(turnSpeed) - this.normal.z * sin(turnSpeed),
-				this.normal.y * sin(turnSpeed) + this.normal.z * cos(turnSpeed)
-			);
+			// this.normal = new THREE.Vector3(
+				// this.normal.x,
+				// this.normal.y * Math.cos(turnSpeed) - this.normal.z * Math.sin(turnSpeed),
+				// this.normal.y * Math.sin(turnSpeed) + this.normal.z * Math.cos(turnSpeed)
+			// );
 			
 			// this.rotation = new THREE.Vector3(
 				// this.rotation.x,
-				// this.rotation.y * cos(turnSpeed) - this.rotation.z * sin(turnSpeed),
-				// this.rotation.y * sin(turnSpeed) + this.rotation.z * cos(turnSpeed)
+				// this.rotation.y * Math.cos(turnSpeed) - this.rotation.z * Math.sin(turnSpeed),
+				// this.rotation.y * Math.sin(turnSpeed) + this.rotation.z * Math.cos(turnSpeed)
 			// );
+		}	
 			
-			
-		}
 	}
 	
 	turnY(index) {
 		if (this.oldIndex.y == index) {
-			let temp = new THREE.Vector3(this.pos.x, this.pos.z).rotate(turnSpeed);
+			let temp = new THREE.Vector2(this.pos.x, this.pos.z)
+				.rotateAround(ZERO2D, turnSpeed);
 			this.pos = new THREE.Vector3(temp.x, this.pos.y, temp.y);
+			this.group.position.x = this.pos.x;
+			this.group.position.y = this.pos.y;
+			this.group.position.z = this.pos.z;
 			
-			temp = new THREE.Vector3(this.index.x, this.index.z).rotate(turnSpeed);
+			temp = new THREE.Vector2(this.index.x, this.index.z)
+				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
 			
-			this.rotation = this.turn(new THREE.Vector3(0, -1, 0));
+			// this.rotation = this.turn(new THREE.Vector3(0, -1, 0));
 			
-			this.normal = new THREE.Vector3(
-				this.normal.x * cos(turnSpeed) - this.normal.z * sin(turnSpeed),
-				this.normal.y,
-				this.normal.x * sin(turnSpeed) + this.normal.z * cos(turnSpeed)
-			);
+			// this.normal = new THREE.Vector3(
+				// this.normal.x * Math.cos(turnSpeed) - this.normal.z * Math.sin(turnSpeed),
+				// this.normal.y,
+				// this.normal.x * Math.sin(turnSpeed) + this.normal.z * Math.cos(turnSpeed)
+			// );
 
 			// this.rotation = new THREE.Vector3(
-				// this.rotation.x * cos(turnSpeed) - this.rotation.z * sin(turnSpeed),
+				// this.rotation.x * Math.cos(turnSpeed) - this.rotation.z * Math.sin(turnSpeed),
 				// this.rotation.y,
-				// this.rotation.x * sin(turnSpeed) + this.rotation.z * cos(turnSpeed)
+				// this.rotation.x * Math.sin(turnSpeed) + this.rotation.z * Math.cos(turnSpeed)
 			// );
 		}
 	}
 	
 	turnZ(index) {
 		if (this.oldIndex.z == index) {
-			let temp = new THREE.Vector3(this.pos.x, this.pos.y).rotate(turnSpeed);
+			let temp = new THREE.Vector2(this.pos.x, this.pos.y)
+				.rotateAround(ZERO2D, turnSpeed);
 			this.pos = new THREE.Vector3(temp.x, temp.y, this.pos.z);
+			this.group.position.x = this.pos.x;
+			this.group.position.y = this.pos.y;
+			this.group.position.z = this.pos.z;
 			
-			temp = new THREE.Vector3(this.index.x, this.index.y).rotate(turnSpeed);
+			temp = new THREE.Vector2(this.index.x, this.index.y)
+				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
 			
-			this.rotation = this.turn(new THREE.Vector3(0, 0, 1));
+			// this.rotation = this.turn(new THREE.Vector3(0, 0, 1));
 			
-			this.normal = new THREE.Vector3(
-				this.normal.x * cos(turnSpeed) - this.normal.y * sin(turnSpeed),
-				this.normal.x * sin(turnSpeed) + this.normal.y * cos(turnSpeed),
-				this.normal.z
-			);
+			// this.normal = new THREE.Vector3(
+				// this.normal.x * Math.cos(turnSpeed) - this.normal.y * Math.sin(turnSpeed),
+				// this.normal.x * Math.sin(turnSpeed) + this.normal.y * Math.cos(turnSpeed),
+				// this.normal.z
+			// );
 			
 			// this.rotation = new THREE.Vector3(
-				// this.rotation.x * cos(turnSpeed) - this.rotation.y * sin(turnSpeed),
-				// this.rotation.x * sin(turnSpeed) + this.rotation.y * cos(turnSpeed),
+				// this.rotation.x * Math.cos(turnSpeed) - this.rotation.y * Math.sin(turnSpeed),
+				// this.rotation.x * Math.sin(turnSpeed) + this.rotation.y * Math.cos(turnSpeed),
 				// this.rotation.z
 			// );
 		}
 	}
 	
 	turn(axis) {
-		// return p5.Vector.add(
-			// p5.Vector.mult(this.pos, cos(turnSpeed)),
-			// p5.Vector.add(
-				// p5.Vector.mult(
-					// p5.Vector.cross(axis, this.pos),
-					// sin(turnSpeed)
-				// ),
-				// p5.Vector.mult(
-					// p5.Vector.mult(
-						// axis,
-						// p5.Vector.dot(axis, this.pos)
-					// ),
-					// (1 - cos(turnSpeed))
-				// )
-			// )
-		// );	
-		return p5.Vector.mult(axis, turnSpeed).add(this.rotation);
+		return axis.multiplyScalar(turnSpeed).add(this.rotation);
 	}
 	
 	rotateAround(vect, axis, angle) {
@@ -178,26 +180,27 @@ class Box {
 		axis = p5.Vector.normalize(axis);
 
 		return p5.Vector.add(
-			p5.Vector.mult(vect, cos(angle)),
+			p5.Vector.mult(vect, Math.cos(angle)),
 			p5.Vector.add(
 				p5.Vector.mult(
 					p5.Vector.cross(axis, vect),
-					sin(angle)
+					Math.sin(angle)
 				),
 				p5.Vector.mult(
 					p5.Vector.mult(
 						axis,
 						p5.Vector.dot(axis, vect)
 					),
-					(1 - cos(angle))
+					(1 - Math.cos(angle))
 				)
 			)
 		);
 	}
 
 	update() {
-		this.pos = new THREE.Vector3(Math.round(this.pos.x), Math.round(this.pos.y), Math.round(this.pos.z));
-		this.index = new THREE.Vector3(Math.round(this.index.x), Math.round(this.index.y), Math.round(this.index.z));
+		this.group.position.round();
+		this.pos = this.group.position;
+		this.index.round();
 		this.oldIndex = this.index;
 		// switch (turn.direction) {
 			// case 'x':
@@ -226,8 +229,8 @@ class Box {
 		// rotateX(this.rotation.x);
 		// let newRotation = new THREE.Vector3(
 			// this.rotation.x,
-			// this.rotation.y * cos(-turnSpeed) - this.rotation.z * sin(-turnSpeed),
-			// this.rotation.y * sin(-turnSpeed) + this.rotation.z * cos(-turnSpeed)
+			// this.rotation.y * Math.cos(-turnSpeed) - this.rotation.z * Math.sin(-turnSpeed),
+			// this.rotation.y * Math.sin(-turnSpeed) + this.rotation.z * Math.cos(-turnSpeed)
 		// );
 		// rotateZ(-this.rotation.y);
 		// rotateY(newRotation.y);

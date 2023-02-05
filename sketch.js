@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
 import { Rubik } from './rubik.js';
+import { Turn } from './turn.js';
 
 let width = 400;
 let height = 400;
+
+let turn = new Turn();
 
 // create the renderer
 const renderer = new THREE.WebGLRenderer();
@@ -34,10 +37,60 @@ function animate() {
 	
 	// cube.rotation.x += 0.01;
 	// cube.rotation.y += 0.01;	
-	rubik.rotate();
+	// rubik.rotate();
+	// do things
+	if (turn.framesLeft > 0) {
+		switch (turn.direction) {
+			case 'x':
+				rubik.turn(turn.direction, turn.index);
+				break;
+			case 'y':
+				rubik.turn(turn.direction, turn.index);
+				break;
+			case 'z':
+				rubik.turn(turn.direction, turn.index);
+				break;
+		}
+		turn.framesLeft--;
+		if (turn.framesLeft == 0)
+			rubik.updateCube();
+	}
+
 	
 	renderer.render( scene, camera );
 }
+
+// attach key controls
+document.onkeydown = e => {
+	if (turn.framesLeft > 0)
+		return;
+	if (e.key == ',') {
+		turn = new Turn('y', 1);
+		return;
+	}
+	if (e.key == 'o') {
+		turn = new Turn('y', -1);
+		return;
+	}
+	if (e.key == 'a') {
+		turn = new Turn('x', -1);
+		return;
+	}
+	if (e.key == 'e') {
+		turn = new Turn('x', 1);
+		return;
+	}
+	if (e.key == 'p') {
+		turn = new Turn('z', -1);
+		return;
+	}
+	if (e.key == 'u') {
+		turn = new Turn('z', 1);
+		return;
+	}
+		
+}
+
 
 // start the animation
 animate();

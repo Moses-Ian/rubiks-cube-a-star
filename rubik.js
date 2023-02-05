@@ -42,10 +42,54 @@ class Rubik {
 					this.cube[i][j][k].addToScene(scene);
 	}
 	
-	rotate() {
+	turn(direction, index) {
 		// this.cube.rotation.x += 0.01;
-		// this.cube.rotation.y += 0.01;	
+		// this.cube.rotation.y += 0.01;
+		switch (direction) {
+			case 'x':
+				this.turnX(index);
+				break;
+			case 'y':
+				this.turnY(index);
+				break;
+			case 'z':
+				this.turnZ(index);
+				break;
+		}
 	}
+	
+	turnX(index) {
+		for(let i=0; i<cubeSize; i++) 
+			for(let j=0; j<cubeSize; j++) 
+				for(let k=0; k<cubeSize; k++) 
+					// if (this.cube[i][j][k].index.x == index)
+						this.cube[i][j][k].turnX(index);
+	}
+	
+	turnY(index) {
+		for(let i=0; i<cubeSize; i++) 
+			for(let j=0; j<cubeSize; j++) 
+				for(let k=0; k<cubeSize; k++) 
+					// if (this.cube[i][j][k].index.y == index)
+						this.cube[i][j][k].turnY(index);
+	}
+	
+	turnZ(index) {
+		for(let i=0; i<cubeSize; i++) 
+			for(let j=0; j<cubeSize; j++) 
+				for(let k=0; k<cubeSize; k++) 
+					// if (this.cube[i][j][k].index.z == index)
+						this.cube[i][j][k].turnZ(index);
+	}
+
+	// rounds things so that they don't drift out of position
+	updateCube() {
+		for(let i=0; i<cubeSize; i++) 
+			for(let j=0; j<cubeSize; j++) 
+				for(let k=0; k<cubeSize; k++) 
+					this.cube[i][j][k].update();
+	}
+
 }
 
 export {Rubik};
