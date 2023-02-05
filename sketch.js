@@ -1,12 +1,11 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
+import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
 import { Turn } from './turn.js';
 
 let width = 400;
 let height = 400;
-
-let turn = new Turn();
 
 // create the renderer
 const renderer = new THREE.WebGLRenderer();
@@ -27,42 +26,25 @@ orbit.update();
 let rubik = new Rubik();
 rubik.addToScene(scene);
 
-// key dictionary
-let turns = new Object();
-turns[','] = new Turn('y',   1);
-turns['o'] = new Turn('y',  -1);
-turns['a'] = new Turn('x',  -1);
-turns['e'] = new Turn('x',   1);
-turns['p'] = new Turn('z',  -1);
-turns['u'] = new Turn('z',   1);
-turns['<'] = new Turn('-y',  1);
-turns['O'] = new Turn('-y', -1);
-turns['A'] = new Turn('-x', -1);
-turns['E'] = new Turn('-x',  1);
-turns['P'] = new Turn('-z', -1);
-turns['U'] = new Turn('-z',  1);
+// gui
+const gui = new dat.GUI();
+const options = { Shuffle: () => rubik.shuffle()};
+
+gui.add(options,'Shuffle');
 
 // define the animation loop
 function animate() {
 	requestAnimationFrame( animate );
 	
 	// do things
-	if (turn.framesLeft > 0) {
-		rubik.turn(turn.direction, turn.index);
-		turn.framesLeft--;
-		if (turn.framesLeft == 0)
-			rubik.updateCube();
-	}
-
+	rubik.updateFrame();
 	
 	renderer.render( scene, camera );
 }
 
 // attach key controls
 document.onkeydown = e => {
-	if (turn.framesLeft > 0)
-		return;
-	turn = turns[e.key]?.start() || turn;
+	rubik.initTurn(e.key);
 }
 
 
