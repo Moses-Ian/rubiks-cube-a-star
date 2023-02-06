@@ -1,20 +1,13 @@
 import * as THREE from 'three';
 
 const HALF_PI = Math.PI/2;
+const ZERO2D = new THREE.Vector2(0, 0);
 
 
 class Cubie {
 	constructor(indexX, indexY, indexZ, normalX, normalY, normalZ) {
-		this.index = {
-			x: indexX,
-			y: indexY,
-			z: indexZ
-		};
-		this.normal = {
-			x: normalX,
-			y: normalY,
-			z: normalZ
-		};
+		this.index = new THREE.Vector3(indexX, indexY, indexZ);
+		this.normal = new THREE.Vector3(normalX, normalY, normalZ);
 	}
 	
 	equals(other) {
@@ -30,12 +23,14 @@ class Cubie {
 	static turnX(index) {
 		if (this.index.x == index) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
-				.normalateAround(ZERO2D, HALF_PI);
+				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
 			
 			this.normal.x = this.normal.x;
 			this.normal.y = this.normal.y * Math.cos(HALF_PI) - this.normal.z * Math.sin(HALF_PI);
 			this.normal.z = this.normal.y * Math.sin(HALF_PI) + this.normal.z * Math.cos(HALF_PI);
+			
+			Cubie.update.call(this);
 		}	
 	}
 	
@@ -48,6 +43,8 @@ class Cubie {
 			this.normal.x = this.normal.x * Math.cos(HALF_PI) - this.normal.z * Math.sin(HALF_PI);
 			this.normal.y = this.normal.y;
 			this.normal.z = this.normal.x * Math.sin(HALF_PI) + this.normal.z * Math.cos(HALF_PI);
+			
+			Cubie.update.call(this);
 		}
 	}
 	
@@ -61,6 +58,7 @@ class Cubie {
 			this.normal.y = this.normal.x * Math.sin(HALF_PI) + this.normal.y * Math.cos(HALF_PI);
 			this.normal.z = this.normal.z;
 			
+			Cubie.update.call(this);
 		}
 	}
 	
@@ -74,6 +72,7 @@ class Cubie {
 			this.normal.y = this.normal.y * Math.cos(-HALF_PI) - this.normal.z * Math.sin(-HALF_PI);
 			this.normal.z = this.normal.y * Math.sin(-HALF_PI) + this.normal.z * Math.cos(-HALF_PI);
 			
+			Cubie.update.call(this);
 		}	
 			
 	}
@@ -88,6 +87,7 @@ class Cubie {
 			this.normal.y = this.normal.y;
 			this.normal.z = this.normal.x * Math.sin(-HALF_PI) + this.normal.z * Math.cos(-HALF_PI);
 			
+			Cubie.update.call(this);
 		}
 	}
 	
@@ -101,7 +101,13 @@ class Cubie {
 			this.normal.y = this.normal.x * Math.sin(-HALF_PI) + this.normal.y * Math.cos(-HALF_PI);
 			this.normal.z = this.normal.z;
 			
+			Cubie.update.call(this);
 		}
+	}
+	
+	static update() {
+		this.index.round();
+		this.normal.round();
 	}
 	
 }

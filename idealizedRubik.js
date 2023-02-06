@@ -48,13 +48,11 @@ class IdealizedRubik {
 						//indexes
 						box.index.x, box.index.y, box.index.z,
 						//normal
-						box.normal.x, box.normal.y, box.normal.z
+						box.normal.x/len, box.normal.y/len, box.normal.z/len
 					);
 				}
 			}
 		}
-		
-		console.log(this.cube);
 	}
 	
 	static solution(cubeSize) {

@@ -47,7 +47,16 @@ function solve(r) {
 		closedSet.push(lowestRubik);
 		
 		lowestRubik.addNeighbors();
-		console.log(lowestRubik);
+		
+		// validate that neighbors got added correctly
+		// lowestRubik.neighbors.forEach(n => {
+			// for(let i=0; i<3; i++)
+				// for(let j=0; j<3; j++)
+					// for(let k=0; k<3; k++) {
+						// console.log(n.cube[i][j][k].index);
+						// console.log(n.cube[i][j][k].normal);
+					// }
+		// });
 		
 		i++;
 		if (i == 1)

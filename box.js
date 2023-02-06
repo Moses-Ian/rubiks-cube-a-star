@@ -46,7 +46,7 @@ class Box {
 		this.pos = this.index.clone().multiplyScalar(this.len);
 		this.rotation = new THREE.Vector3(0, 0, 0);
 		// the normal is easy to keep track of and predict
-		this.normal = new THREE.Vector3(1, 0, 0);
+		this.normal = new THREE.Vector3(1, 0, 0).multiplyScalar(this.len);
 		
 		this.planes = new Array(6);
 		this.outlines = new Array(6);
@@ -113,7 +113,7 @@ class Box {
 			const normalMaterial = new THREE.LineBasicMaterial( { color: 0x000000 } );
 			const points = [];
 			points.push( this.pos.clone() );
-			points.push( this.normal.multiplyScalar(this.len).add(this.pos) );
+			points.push( this.normal.clone().add(this.pos) );
 			const normalGeometry = new THREE.BufferGeometry().setFromPoints( points );
 			this.line = new THREE.Line( normalGeometry, normalMaterial );
 			// console.log(this.line);
