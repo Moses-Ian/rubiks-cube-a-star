@@ -32,16 +32,22 @@ function solve(r) {
 		//find the lowest f
 		//if we have a lot of cubes in the openset, this should be priority queue
 		let lowestRubik = openSet[0];
-		openSet.forEach(rubik => {
+		let index = 0;
+		openSet.forEach((rubik, i) => {
 			if (rubik.f < lowestRubik.f) 
 				lowestRubik = rubik;
+				index = i;
 		});
 		
 		if (lowestRubik.equals(endRubik)) {
 			console.log('done');
 		}
 		
+		openSet.splice(index, 1);
+		closedSet.push(lowestRubik);
 		
+		lowestRubik.addNeighbors();
+		console.log(lowestRubik);
 		
 		i++;
 		if (i == 1)

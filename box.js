@@ -21,6 +21,8 @@ With this setup, I can display 100 cubes and have them rotate only slightly fast
 import * as THREE from 'three';
 import { turnSpeed } from './turn.js';
 
+const DRAW_NORMAL = true;
+
 const colors = [
 	new THREE.Color('white'), new THREE.Color('yellow'),
 	new THREE.Color('orange'), new THREE.Color('red'),
@@ -43,6 +45,8 @@ class Box {
 		this.len = len;
 		this.pos = this.index.clone().multiplyScalar(this.len);
 		this.rotation = new THREE.Vector3(0, 0, 0);
+		// the normal is easy to keep track of and predict
+		this.normal = new THREE.Vector3(1, 0, 0);
 		
 		this.planes = new Array(6);
 		this.outlines = new Array(6);
@@ -102,6 +106,19 @@ class Box {
 		
 		this.group.position.set(this.pos.x, this.pos.y, this.pos.z);
 		
+		// make the normal
+		// this is separate from the group so that we can check our math
+		this.line = null;
+		if (DRAW_NORMAL) {
+			const normalMaterial = new THREE.LineBasicMaterial( { color: 0x000000 } );
+			const points = [];
+			points.push( this.pos.clone() );
+			points.push( this.normal.multiplyScalar(this.len).add(this.pos) );
+			const normalGeometry = new THREE.BufferGeometry().setFromPoints( points );
+			this.line = new THREE.Line( normalGeometry, normalMaterial );
+			console.log(this.line);
+		}
+		
 	}
 	
 	static turnX(index) {
@@ -113,6 +130,11 @@ class Box {
 			this.updatePos();
 			
 			this.turn(X3D);
+
+			this.normal.x = this.normal.x;
+			this.normal.y = this.normal.y * Math.cos(turnSpeed) - this.normal.z * Math.sin(turnSpeed);
+			this.normal.z = this.normal.y * Math.sin(turnSpeed) + this.normal.z * Math.cos(turnSpeed);
+			this.updateNormal();
 		}	
 			
 	}
@@ -126,6 +148,11 @@ class Box {
 			this.updatePos();
 			
 			this.turn(Y3D);
+
+			this.normal.x = this.normal.x * Math.cos(turnSpeed) - this.normal.z * Math.sin(turnSpeed);
+			this.normal.y = this.normal.y;
+			this.normal.z = this.normal.x * Math.sin(turnSpeed) + this.normal.z * Math.cos(turnSpeed);
+			this.updateNormal();
 		}
 	}
 	
@@ -138,6 +165,11 @@ class Box {
 			this.updatePos();
 			
 			this.turn(Z3D);
+
+			this.normal.x = this.normal.x * Math.cos(turnSpeed) - this.normal.y * Math.sin(turnSpeed);
+			this.normal.y = this.normal.x * Math.sin(turnSpeed) + this.normal.y * Math.cos(turnSpeed);
+			this.normal.z = this.normal.z;
+			this.updateNormal();
 		}
 	}
 	
@@ -150,6 +182,11 @@ class Box {
 			this.updatePos();
 			
 			this.turn(X3D, -turnSpeed);
+
+			this.normal.x = this.normal.x;
+			this.normal.y = this.normal.y * Math.cos(-turnSpeed) - this.normal.z * Math.sin(-turnSpeed);
+			this.normal.z = this.normal.y * Math.sin(-turnSpeed) + this.normal.z * Math.cos(-turnSpeed);
+			this.updateNormal();
 		}	
 			
 	}
@@ -163,6 +200,11 @@ class Box {
 			this.updatePos();
 			
 			this.turn(Y3D, -turnSpeed);
+
+			this.normal.x = this.normal.x * Math.cos(-turnSpeed) - this.normal.z * Math.sin(-turnSpeed);
+			this.normal.y = this.normal.y;
+			this.normal.z = this.normal.x * Math.sin(-turnSpeed) + this.normal.z * Math.cos(-turnSpeed);
+			this.updateNormal();
 		}
 	}
 	
@@ -175,11 +217,31 @@ class Box {
 			this.updatePos();
 			
 			this.turn(Z3D, -turnSpeed);
+
+			this.normal.x = this.normal.x * Math.cos(-turnSpeed) - this.normal.y * Math.sin(-turnSpeed);
+			this.normal.y = this.normal.x * Math.sin(-turnSpeed) + this.normal.y * Math.cos(-turnSpeed);
+			this.normal.z = this.normal.z;
+			this.updateNormal();
 		}
 	}
 	
 	turn(axis, angle = turnSpeed) {
 		this.group.rotateOnWorldAxis(axis, angle);
+	}
+	
+	updateNormal() {
+		if (!DRAW_NORMAL)
+			return;
+		let arr = this.line.geometry.attributes.position.array;
+		arr[0] = this.pos.x;
+		arr[1] = this.pos.y;
+		arr[2] = this.pos.z;
+		arr[3] = this.normal.x;
+		arr[4] = this.normal.y;
+		arr[5] = this.normal.z;
+		this.line.geometry.attributes.position.needsUpdate = true;
+		this.line.geometry.computeBoundingBox();
+		this.line.geometry.computeBoundingSphere();
 	}
 	
 	updatePos() {
@@ -195,10 +257,13 @@ class Box {
 		this.index.round();
 		this.oldIndex = this.index;
 		this.rotation = new THREE.Vector3(this.group.rotation.x, this.group.rotation.y, this.group.rotation.z);
+		this.normal.round();
 	}
 	
 	addToScene(scene) {
-		scene.add(this.group);
+		// scene.add(this.group);
+		if (DRAW_NORMAL)
+			scene.add(this.line);
 	}
 }
 

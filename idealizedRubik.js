@@ -1,7 +1,26 @@
+// I should REALLY consider making a lot of this static
+
 import {Rubik, len} from './rubik.js';
 import {Cubie} from './cubie.js';
+import { Turn } from './turn.js';
 
+// optional parameters
 const cubeSize = 3;
+
+// key dictionary
+const turns = new Object();
+turns[','] = new Turn('y',   1);
+turns['o'] = new Turn('y',  -1);
+turns['a'] = new Turn('x',  -1);
+turns['e'] = new Turn('x',   1);
+turns['p'] = new Turn('z',  -1);
+turns['u'] = new Turn('z',   1);
+turns['<'] = new Turn('-y',  1);
+turns['O'] = new Turn('-y', -1);
+turns['A'] = new Turn('-x', -1);
+turns['E'] = new Turn('-x',  1);
+turns['P'] = new Turn('-z', -1);
+turns['U'] = new Turn('-z',  1);
 
 class IdealizedRubik {
 	constructor(rubik) {
@@ -15,7 +34,7 @@ class IdealizedRubik {
 		
 		// parameters
 		this.cubeSize = rubik.cube.length;
-		let offset = (this.cubeSize-1)/2;
+		this.offset = (this.cubeSize-1)/2;
 		
 		// create the cube
 		this.cube = new Array(this.cubeSize);
@@ -28,8 +47,8 @@ class IdealizedRubik {
 					this.cube[i][j][k] = new Cubie(
 						//indexes
 						box.index.x, box.index.y, box.index.z,
-						//rotation
-						box.rotation.x, box.rotation.y, box.rotation.z
+						//normal
+						box.normal.x, box.normal.y, box.normal.z
 					);
 				}
 			}
@@ -55,8 +74,8 @@ class IdealizedRubik {
 					cube[i][j][k] = new Cubie(
 						//indexes
 						i-offset, j-offset, k-offset,
-						//rotation
-						0, 0, 0
+						//normal
+						1, 0, 0
 					);
 				}
 			}
@@ -77,6 +96,106 @@ class IdealizedRubik {
 						return false;
 		return true;
 	}
+	
+	// for each turn that can be made, create a new idealized rubik and add it to the list of neighbors
+	addNeighbors() {
+		this.neighbors = [];
+		Object.keys(turns).forEach(key => 
+			this.neighbors.push(this.fromTurn(turns[key]))
+		);
+		
+	}
+	
+	// does not turn THIS cube
+	// it creates a new cube that is a copy of this one, turns and returns THAT one
+	fromTurn(turn) {
+		let rubik = this.copy();
+		
+		// do more things
+		switch (turn.direction) {
+			case 'x':
+				rubik.turnX(turn.index);
+				break;
+			case 'y':
+				rubik.turnY(turn.index);
+				break;
+			case 'z':
+				rubik.turnZ(turn.index);
+				break;
+			case '-x':
+				rubik.turnNegX(turn.index);
+				break;
+			case '-y':
+				rubik.turnNegY(turn.index);
+				break;
+			case '-z':
+				rubik.turnNegZ(turn.index);
+				break;
+		}
+		return rubik;
+	}
+	
+	turnX(index) {
+		this.forEach('turnX', index);
+	}
+	
+	turnY(index) {
+		this.forEach('turnY', index);
+	}
+	
+	turnZ(index) {
+		this.forEach('turnZ', index);
+	}
+
+	turnNegX(index) {
+		this.forEach('turnNegX', index);
+	}
+	
+	turnNegY(index) {
+		this.forEach('turnNegY', index);
+	}
+	
+	turnNegZ(index) {
+		this.forEach('turnNegZ', index);
+	}
+
+	forEach(fun, index) {
+		for(let i=0; i<cubeSize; i++) 
+			for(let j=0; j<cubeSize; j++) 
+				for(let k=0; k<cubeSize; k++) 
+					Cubie[fun].call(this.cube[i][j][k], index);
+	}
+
+	
+	copy() {
+		let rubik = new IdealizedRubik();
+		let cubeSize = this.cubeSize;
+		let offset = this.offset;
+		
+		let cube = new Array(cubeSize);
+		for(let i=0; i<cubeSize; i++) {
+			cube[i] = new Array(cubeSize);
+			for(let j=0; j<cubeSize; j++) {
+				cube[i][j] = new Array(cubeSize);
+				for(let k=0; k<cubeSize; k++) {
+					let c = this.cube[i][j][k];
+					cube[i][j][k] = new Cubie(
+						//indexes
+						c.index.x, c.index.y, c.index.z,
+						//normal
+						c.normal.x, c.normal.y, c.normal.z
+					);
+				}
+			}
+		}
+		
+		rubik.cube = cube;
+		rubik.cubeSize = cubeSize;
+		rubik.offset = offset;
+		
+		return rubik;
+	}
+	
 }
 
 export {IdealizedRubik};
