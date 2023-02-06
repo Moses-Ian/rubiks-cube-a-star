@@ -86,11 +86,11 @@ class IdealizedRubik {
 		return solutionRubik;
 	}
 	
-	equals(other) {
+	equals(other, log) {
 		for(let i=0; i<this.cubeSize; i++)
 			for(let j=0; j<this.cubeSize; j++)
 				for(let k=0; k<this.cubeSize; k++) 
-					if (!this.cube[i][j][k].equals(other.cube[i][j][k]))
+					if (!this.cube[i][j][k].equals(other.cube[i][j][k], log))
 						return false;
 		return true;
 	}

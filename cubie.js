@@ -10,7 +10,12 @@ class Cubie {
 		this.normal = new THREE.Vector3(normalX, normalY, normalZ);
 	}
 	
-	equals(other) {
+	equals(other, log = false) {
+		if (log) {
+			console.log('----------')
+			console.log(this.index, other.index);
+			console.log(this.normal, other.normal);
+		}
 		if (this.index.x != other.index.x) return false;
 		if (this.index.y != other.index.y) return false;
 		if (this.index.z != other.index.z) return false;

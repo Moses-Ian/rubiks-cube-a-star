@@ -4,9 +4,12 @@ import { IdealizedRubik } from './idealizedRubik.js';
 // optional parameters
 const ATTACH_TO_WINDOW = true;
 const cubeSize = 3;
+const turnScore = 1;
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
+const perfectScore = getScore(endRubik);
+console.log(`perfect score = ${perfectScore}`);
 
 function solve(r) {
 	console.log('solve');
@@ -31,25 +34,62 @@ function solve(r) {
 		
 		//find the lowest f
 		//if we have a lot of cubes in the openset, this should be priority queue
-		let lowestRubik = openSet[0];
+		let current = openSet[0];
 		let index = 0;
 		openSet.forEach((rubik, i) => {
-			if (rubik.f < lowestRubik.f) 
-				lowestRubik = rubik;
+			if (rubik.f < current.f) {
+				current = rubik;
 				index = i;
+			}
 		});
 		
-		if (lowestRubik.equals(endRubik)) {
+		console.log(`current score = ${current.score}`);
+		
+		// check whether we're done
+		if (current.equals(endRubik, current.score == 27)) {
 			console.log('done');
 		}
 		
+		// move it to the other set
 		openSet.splice(index, 1);
-		closedSet.push(lowestRubik);
+		closedSet.push(current);
 		
-		lowestRubik.addNeighbors();
+		// create neighbors
+		current.addNeighbors();
+		current.neighbors.forEach(neighbor => {
+			// if it's already in the closed set, leave
+			for(let i=0; i<closedSet.length; i++)
+				if (closedSet[i].equals(neighbor))
+					return;
+			
+			// set g score
+			let g = current.g + turnScore;
+			for(let i=0; i<openSet.length; i++)
+				if (openSet[i].equals(neighbor))
+					if (g > openSet[i].g)
+						return;
+					else
+						break;
+			neighbor.g = g;
+			
+			// set h and f score
+			// h is the difference between a perfect score and this cube's score
+			neighbor.h = perfectScore - getScore(current);
+			neighbor.f = neighbor.g + neighbor.h;
+			neighbor.score = getScore(neighbor);
+			
+			
+			
+			// add it to the open set
+			openSet.push(neighbor);
+			
+			
+			
+			
+		});
 		
 		// validate that neighbors got added correctly
-		// lowestRubik.neighbors.forEach(n => {
+		// current.neighbors.forEach(n => {
 			// for(let i=0; i<3; i++)
 				// for(let j=0; j<3; j++)
 					// for(let k=0; k<3; k++) {
@@ -58,11 +98,39 @@ function solve(r) {
 					// }
 		// });
 		
+		
+		
+		
+		console.log(openSet.length, closedSet.length);
+		
+		
 		i++;
-		if (i == 1)
+		if (i == 8)
 			break;
 	}
 	
+}
+
+function getScore(current) {
+	let score = 0;
+	for(let i=0; i<3; i++)
+		for(let j=0; j<3; j++)
+			for(let k=0; k<3; k++)
+				score += getCubieScore(current, i, j, k);
+	return score;
+}
+
+function getCubieScore(current, i, j, k) {
+	let off = current.offset;
+	let cubie = current.cube[i][j][k];
+	let score = 0;
+	
+	// for now, keep it simple
+	if (cubie.index.x == i-off && cubie.index.y == j-off && cubie.index.z == k-off)
+		score++;
+	// if (cubie.normal.x == 1 && cubie.index.y == 0 && cubie.index.z == 0)
+		// score++;
+	return score;
 }
 
 export {solve};
