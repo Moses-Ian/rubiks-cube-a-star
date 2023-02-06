@@ -4,7 +4,8 @@
   "description": "An A* algorithm for solving a Rubik's Cube",
   "scripts": {
     "start": "five-server . -p 8000",
-    "deploy": "gh-pages -d ."
+    "deploy": "gh-pages -d .",
+    "start-p5": "cd p5-version && browser-sync start --server -f -w"
   },
   "keywords": [],
   "author": "Ian Moses",
@@ -12,5 +13,8 @@
   "devDependencies": {
     "five-server": "^0.1.9",
     "gh-pages": "^4.0.0"
+  },
+  "dependencies": {
+    "browser-sync": "^2.27.11"
   }
 }

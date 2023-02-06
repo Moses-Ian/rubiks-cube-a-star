@@ -116,7 +116,7 @@ class Box {
 			points.push( this.normal.multiplyScalar(this.len).add(this.pos) );
 			const normalGeometry = new THREE.BufferGeometry().setFromPoints( points );
 			this.line = new THREE.Line( normalGeometry, normalMaterial );
-			console.log(this.line);
+			// console.log(this.line);
 		}
 		
 	}
@@ -240,8 +240,6 @@ class Box {
 		arr[4] = this.normal.y;
 		arr[5] = this.normal.z;
 		this.line.geometry.attributes.position.needsUpdate = true;
-		this.line.geometry.computeBoundingBox();
-		this.line.geometry.computeBoundingSphere();
 	}
 	
 	updatePos() {
@@ -257,13 +255,33 @@ class Box {
 		this.index.round();
 		this.oldIndex = this.index;
 		this.rotation = new THREE.Vector3(this.group.rotation.x, this.group.rotation.y, this.group.rotation.z);
-		this.normal.round();
+		this.roundNormal();
 	}
 	
 	addToScene(scene) {
-		// scene.add(this.group);
+		scene.add(this.group);
 		if (DRAW_NORMAL)
 			scene.add(this.line);
+	}
+	
+	roundNormal() {
+		this.normal.round();
+		let x = this.normal.x % 10;
+		if (x == 9 || x == -1)
+			this.normal.x++;
+		if (x == 1 || x == -9)
+			this.normal.x--;
+		let y = this.normal.y % 10;
+		if (y == 9 || y == -1)
+			this.normal.y++;
+		if (y == 1 || y == -9)
+			this.normal.y--;
+		let z = this.normal.z % 10;
+		if (z == 9 || z == -1)
+			this.normal.z++;
+		if (z == 1 || z == -9)
+			this.normal.z--;
+		this.updateNormal();
 	}
 }
 
