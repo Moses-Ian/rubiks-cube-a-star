@@ -31,9 +31,10 @@ class Cubie {
 				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
 			
+			temp = this.normal.y;
 			this.normal.x = this.normal.x;
-			this.normal.y = this.normal.y * Math.cos(HALF_PI) - this.normal.z * Math.sin(HALF_PI);
-			this.normal.z = this.normal.y * Math.sin(HALF_PI) + this.normal.z * Math.cos(HALF_PI);
+			this.normal.y = -this.normal.z;
+			this.normal.z = temp;
 			
 			Cubie.update.call(this);
 		}	
@@ -45,9 +46,10 @@ class Cubie {
 				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
 			
-			this.normal.x = this.normal.x * Math.cos(HALF_PI) - this.normal.z * Math.sin(HALF_PI);
+			temp = this.normal.x;
+			this.normal.x = -this.normal.z;
 			this.normal.y = this.normal.y;
-			this.normal.z = this.normal.x * Math.sin(HALF_PI) + this.normal.z * Math.cos(HALF_PI);
+			this.normal.z = temp;
 			
 			Cubie.update.call(this);
 		}
@@ -59,8 +61,9 @@ class Cubie {
 				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
 			
-			this.normal.x = this.normal.x * Math.cos(HALF_PI) - this.normal.y * Math.sin(HALF_PI);
-			this.normal.y = this.normal.x * Math.sin(HALF_PI) + this.normal.y * Math.cos(HALF_PI);
+			temp = this.normal.x;
+			this.normal.x = -this.normal.y;
+			this.normal.y = temp;
 			this.normal.z = this.normal.z;
 			
 			Cubie.update.call(this);
@@ -73,9 +76,10 @@ class Cubie {
 				.rotateAround(ZERO2D, -HALF_PI);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
 			
+			temp = this.normal.y;
 			this.normal.x = this.normal.x;
-			this.normal.y = this.normal.y * Math.cos(-HALF_PI) - this.normal.z * Math.sin(-HALF_PI);
-			this.normal.z = this.normal.y * Math.sin(-HALF_PI) + this.normal.z * Math.cos(-HALF_PI);
+			this.normal.y = this.normal.z;
+			this.normal.z = -temp;
 			
 			Cubie.update.call(this);
 		}	
@@ -88,9 +92,10 @@ class Cubie {
 				.rotateAround(ZERO2D, -HALF_PI);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
 			
-			this.normal.x = this.normal.x * Math.cos(-HALF_PI) - this.normal.z * Math.sin(-HALF_PI);
+			temp = this.normal.x;
+			this.normal.x = this.normal.z;
 			this.normal.y = this.normal.y;
-			this.normal.z = this.normal.x * Math.sin(-HALF_PI) + this.normal.z * Math.cos(-HALF_PI);
+			this.normal.z = -temp;
 			
 			Cubie.update.call(this);
 		}
@@ -102,8 +107,9 @@ class Cubie {
 				.rotateAround(ZERO2D, -HALF_PI);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
 			
-			this.normal.x = this.normal.x * Math.cos(-HALF_PI) - this.normal.y * Math.sin(-HALF_PI);
-			this.normal.y = this.normal.x * Math.sin(-HALF_PI) + this.normal.y * Math.cos(-HALF_PI);
+			temp = this.normal.x;
+			this.normal.x = this.normal.y;
+			this.normal.y = -temp;
 			this.normal.z = this.normal.z;
 			
 			Cubie.update.call(this);

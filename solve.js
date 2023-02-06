@@ -46,7 +46,7 @@ function solve(r) {
 		console.log(`current score = ${current.score}`);
 		
 		// check whether we're done
-		if (current.equals(endRubik, current.score == 27)) {
+		if (current.equals(endRubik)) {
 			console.log('done');
 		}
 		
