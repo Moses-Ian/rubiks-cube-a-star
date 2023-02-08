@@ -9,7 +9,7 @@ const cube = new Array(cubeSize);
 const len = 10;
 const offset = (cubeSize - 1) / 2;
 const MILLIS_PER_FRAME = 25;
-const shuffleMoves = 50;
+const shuffleMoves = 3;
 
 // key dictionary
 const turns = new Object();
@@ -56,9 +56,7 @@ class Rubik {
 	}
 
 	initTurn(key) {
-		if (this.currentTurn.framesLeft > 0)
-			return;
-		this.currentTurn = turns[key]?.start() || this.currentTurn;
+		this.runTurn(turns[key]);
 	}
 	
 	runTurn(turnObject) {		
@@ -141,7 +139,7 @@ class Rubik {
 		moveList.forEach(({ previousTurn:move }, index) => 
 			setTimeout(
 				() => this.runTurn(move),
-				index * (turnFrames*2) * MILLIS_PER_FRAME
+				index * turnFrames * MILLIS_PER_FRAME
 			)
 		);
 	}

@@ -44,6 +44,7 @@ function solve(r) {
 		});
 		
 		console.log(`current score = ${current.score}`);
+		console.log(openSet.length, closedSet.length);
 		
 		// check whether we're done
 		if (current.equals(endRubik)) {
@@ -113,11 +114,9 @@ function solve(r) {
 		
 		
 		
-		console.log(openSet.length, closedSet.length);
 		
 		
-		i++;
-		if (i == 8)
+		if (closedSet.length == 1000)
 			break;
 	}
 	
@@ -153,9 +152,13 @@ function showThePath(r, current) {
 		path.push(temp);
 		temp = temp.previousRubik;
 	}while(temp);
+	path.reverse();
+	
 	
 	// execute the moves
 	r.executeMoves(path);
 }
+
+
 
 export {solve};
