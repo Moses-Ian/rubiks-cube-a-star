@@ -90,6 +90,7 @@ class IdealizedRubik {
 		return solutionRubik;
 	}
 	
+	// checking if they're equal, in the sense that they have the blocks in the same place
 	equals(other, log) {
 		for(let i=0; i<this.cubeSize; i++)
 			for(let j=0; j<this.cubeSize; j++)
@@ -97,6 +98,11 @@ class IdealizedRubik {
 					if (!this.cube[i][j][k].equals(other.cube[i][j][k], log))
 						return false;
 		return true;
+	}
+	
+	// checking priority, where we compare f values
+	static comparePriority(a, b) {
+		return a.f < b.f;
 	}
 	
 	// for each turn that can be made, create a new idealized rubik and add it to the list of neighbors

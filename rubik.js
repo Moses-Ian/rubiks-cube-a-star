@@ -9,7 +9,7 @@ const cube = new Array(cubeSize);
 const len = 10;
 const offset = (cubeSize - 1) / 2;
 const MILLIS_PER_FRAME = 25;
-const shuffleMoves = 10;
+const shuffleMoves = 8;
 
 // key dictionary
 const turns = new Object();

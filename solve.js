@@ -1,9 +1,10 @@
 import { Rubik } from './rubik.js';
 import { IdealizedRubik } from './idealizedRubik.js';
+import { PriorityQueue } from './PriorityQueue.js';
 
 // optional parameters
-const BREAK_POINT = 2000;
-const ATTACH_TO_WINDOW = true;
+const BREAK_POINT = 1000;
+const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
 const turnScore = 1;
 const locationScore = 1;
@@ -17,9 +18,20 @@ let perfectScore = getScore(endRubik);
 
 function solve(r) {
 	console.log('/----- solve -----/');
+	let solveStart = performance.now();
+	let solveEnd;
+	let equalTime = 0;
+	let openOperationsTime = 0;
+	let closedOperationsTime = 0;
+	let start;
+	let end;
+	
+	let adds = 0;
+	let removes = 0;
+	let access = 0;
 	
 	// create the sets
-	let openSet = [];
+	let openSet = new PriorityQueue(IdealizedRubik.comparePriority);
 	let closedSet = [];
 	if (ATTACH_TO_WINDOW) {
 		window.openSet = openSet;
@@ -28,7 +40,11 @@ function solve(r) {
 	
 	// get started
 	let startRubik = new IdealizedRubik(r);
+	start = performance.now();
 	openSet.push(startRubik);
+	end = performance.now();
+	openOperationsTime += end-start;
+	adds++;
 	
 	// set a starting score -> you get no points for your starting position
 	const startScore = getScore(startRubik);
@@ -37,54 +53,88 @@ function solve(r) {
 	console.log(`perfect score = ${perfectScore}`);
 	
 	// while open set is not empty
-	while(openSet.length) {
+	while(openSet.size()) {
 		
 		//find the lowest f aka highest score
 		//if we have a lot of cubes in the openset, this should be priority queue
-		let current = openSet[0];
-		let index = 0;
-		openSet.forEach((rubik, i) => {
-			if (rubik.f < current.f) {
-				current = rubik;
-				index = i;
-			}
-		});
+		// let current = openSet[0];
+		// access++;
+		// let index = 0;
+		// openSet.forEach((rubik, i) => {
+			// if (rubik.f < current.f) {
+				// current = rubik;
+				// index = i;
+			// }
+			// access++;
+		// });
+		start = performance.now();
+		let current = openSet.pop();
+		end = performance.now();
+		openOperationsTime += end-start;
+		removes++;
 		
-		if (closedSet.length % 10 == 0) {
+		// if (closedSet.length % 10 == 0) {
 			console.log(`score = ${current.score} g = ${current.g} f = ${current.f}`);
-			console.log(openSet.length, closedSet.length);
-		}
+			console.log(openSet.size(), closedSet.length);
+		// }
 		
 		// check whether we're done
-		if (current.equals(endRubik)) {
+		start = performance.now();
+		let result = current.equals(endRubik);
+		end = performance.now();
+		equalTime += end-start;
+		if (result) {
+			solveEnd = performance.now();
 			
 			// show the path
 			showThePath(r, current);
 			
 			console.log('done');
-			return;
+			break;
 		}
 		
 		// move it to the other set
-		openSet.splice(index, 1);
+		// start = performance.now();
+		// openSet.splice(index, 1);
+		// end = performance.now();
+		// openOperationsTime += end-start;
+		// removes++;
+		
+		start = performance.now();
 		closedSet.push(current);
+		end = performance.now();
+		closedOperationsTime += end-start;
 		
 		// create neighbors
 		current.addNeighbors();
 		current.neighbors.forEach(neighbor => {
 			// if it's already in the closed set, leave
-			for(let i=0; i<closedSet.length; i++)
-				if (closedSet[i].equals(neighbor))
+			for(let i=0; i<closedSet.length; i++) {
+				start = performance.now();
+				result = closedSet[i].equals(neighbor);
+				end = performance.now();
+				closedOperationsTime += end-start;
+				if (result)
 					return;
+			}
 			
 			// set g score
 			let g = current.g + turnScore;
-			for(let i=0; i<openSet.length; i++)
-				if (openSet[i].equals(neighbor))
-					if (g > openSet[i].g)
+			// check every element in the queue's underlying heap and compare it
+			for(let i=0; i<openSet.size(); i++) {
+				start = performance.now();
+				result = openSet._heap[i].equals(neighbor);
+				end = performance.now();
+				openOperationsTime += end-start
+				access++;
+				if (result) {
+					access++;
+					if (g > openSet._heap[i].g) 
 						return;
 					else
 						break;
+				}
+			}
 			neighbor.g = g;
 			
 			// set score
@@ -103,7 +153,11 @@ function solve(r) {
 			
 			
 			// add it to the open set
+			start = performance.now();
 			openSet.push(neighbor);
+			end = performance.now();
+			openOperationsTime += end-start;
+			adds++;
 			
 			
 			
@@ -128,6 +182,16 @@ function solve(r) {
 		if (closedSet.length == BREAK_POINT)
 			break;
 	}
+	if (!solveEnd) {
+		solveEnd = performance.now();
+		console.log(`Could not find solution`);
+	}
+	console.log(openSet.size(), closedSet.length);
+	console.log(`solve run time = ${solveEnd-solveStart}`);
+	console.log(`equals run time = ${equalTime}`);
+	console.log(`open operations run time = ${openOperationsTime}`);
+	console.log(`closed operations run time = ${closedOperationsTime}`);
+	console.log(`adds = ${adds} removes = ${removes} accesses = ${access}`);
 	
 }
 
