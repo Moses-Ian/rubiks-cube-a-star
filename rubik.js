@@ -61,6 +61,12 @@ class Rubik {
 		this.currentTurn = turns[key]?.start() || this.currentTurn;
 	}
 	
+	runTurn(turnObject) {		
+		if (this.currentTurn.framesLeft > 0)
+			return;
+		this.currentTurn = turnObject?.start() || this.currentTurn;
+	}
+	
 	turn(direction, index) {
 		switch (direction) {
 			case 'x':
@@ -120,7 +126,7 @@ class Rubik {
 					Box[fun].call(this.cube[i][j][k], index);
 	}
 
-	async shuffle() {
+	shuffle() {
 		let shuffleInterval = setInterval(() => {
 			let key = Object.keys(turns)[Math.floor(Math.random() * 12)];
 			this.initTurn(key);
@@ -129,9 +135,16 @@ class Rubik {
 			() => clearTimeout(shuffleInterval), 
 			turnFrames * MILLIS_PER_FRAME * shuffleMoves
 		);
-		
-		
 	}	
+
+	executeMoves(moveList) {
+		moveList.forEach(({ previousTurn:move }, index) => 
+			setTimeout(
+				() => this.runTurn(move),
+				index * (turnFrames*2) * MILLIS_PER_FRAME
+			)
+		);
+	}
 
 	updateFrame() {
 		if (this.currentTurn.framesLeft > 0) {

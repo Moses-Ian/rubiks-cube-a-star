@@ -25,9 +25,12 @@ turns['U'] = new Turn('-z',  1);
 class IdealizedRubik {
 	constructor(rubik) {
 		// each cube has a value function
-		this.f = 0;
+		this.score = 0;		// better score == closer to ideal cube
 		this.g = 0;
 		this.h = 0;
+		this.neighbors = [];
+		this.previousRubik = null;
+		this.previousTurn = null;
 		
 		if (rubik == null) 
 			return;
@@ -108,6 +111,7 @@ class IdealizedRubik {
 	// it creates a new cube that is a copy of this one, turns and returns THAT one
 	fromTurn(turn) {
 		let rubik = this.copy();
+		rubik.previousTurn = turn;
 		
 		// do more things
 		switch (turn.direction) {
