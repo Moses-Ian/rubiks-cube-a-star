@@ -2,20 +2,21 @@ import { Rubik } from './rubik.js';
 import { IdealizedRubik } from './idealizedRubik.js';
 
 // optional parameters
+const BREAK_POINT = 2000;
 const ATTACH_TO_WINDOW = true;
 const cubeSize = 3;
 const turnScore = 1;
 const locationScore = 1;
 const closeScore = 0.5;
 const nearScore = 0.25;
+const scoreWeight = 1;	// bigger is less impactful
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
-const perfectScore = getScore(endRubik);
-console.log(`perfect score = ${perfectScore}`);
+let perfectScore = getScore(endRubik);
 
 function solve(r) {
-	console.log('solve');
+	console.log('/----- solve -----/');
 	
 	// create the sets
 	let openSet = [];
@@ -29,9 +30,12 @@ function solve(r) {
 	let startRubik = new IdealizedRubik(r);
 	openSet.push(startRubik);
 	
-	// escape!
-	let i=0;
-
+	// set a starting score -> you get no points for your starting position
+	const startScore = getScore(startRubik);
+	// startRubik.score = startScore;
+	perfectScore = getScore(endRubik) - startScore;
+	console.log(`perfect score = ${perfectScore}`);
+	
 	// while open set is not empty
 	while(openSet.length) {
 		
@@ -46,8 +50,10 @@ function solve(r) {
 			}
 		});
 		
-		console.log(`current score = ${current.score}`);
-		console.log(openSet.length, closedSet.length);
+		if (closedSet.length % 10 == 0) {
+			console.log(`score = ${current.score} g = ${current.g} f = ${current.f}`);
+			console.log(openSet.length, closedSet.length);
+		}
 		
 		// check whether we're done
 		if (current.equals(endRubik)) {
@@ -82,11 +88,11 @@ function solve(r) {
 			neighbor.g = g;
 			
 			// set score
-			neighbor.score = getScore(neighbor);
+			neighbor.score = getScore(neighbor) - startScore;
 			neighbor.h = perfectScore - neighbor.score;
 
 			// set f
-			neighbor.f = neighbor.g + neighbor.h;
+			neighbor.f = neighbor.g + neighbor.h * scoreWeight;
 			// neighbor.f = -neighbor.score;
 			
 			// set cameFrom
@@ -119,7 +125,7 @@ function solve(r) {
 		
 		
 		
-		if (closedSet.length == 1000)
+		if (closedSet.length == BREAK_POINT)
 			break;
 	}
 	
@@ -172,6 +178,9 @@ function showThePath(r, current) {
 		temp = temp.previousRubik;
 	}while(temp);
 	path.reverse();
+
+	console.log('/----- Best Path -----/');
+	path.forEach(cube => console.log(`score = ${cube.score} f = ${cube.f}`));
 	
 	
 	// execute the moves

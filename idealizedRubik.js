@@ -31,6 +31,7 @@ class IdealizedRubik {
 		this.neighbors = [];
 		this.previousRubik = null;
 		this.previousTurn = null;
+		this.moveCount = 0;
 		
 		if (rubik == null) 
 			return;
