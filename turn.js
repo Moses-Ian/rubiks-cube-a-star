@@ -1,4 +1,4 @@
-const turnFrames = 30;
+const turnFrames = 15;
 const turnSpeed = Math.PI/2 / turnFrames;
 
 class Turn {

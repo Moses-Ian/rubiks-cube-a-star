@@ -5,6 +5,9 @@ import { IdealizedRubik } from './idealizedRubik.js';
 const ATTACH_TO_WINDOW = true;
 const cubeSize = 3;
 const turnScore = 1;
+const locationScore = 1;
+const closeScore = 0.5;
+const nearScore = 0.25;
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
@@ -136,11 +139,27 @@ function getCubieScore(current, i, j, k) {
 	let cubie = current.cube[i][j][k];
 	let score = 0;
 	
+	//store as bools
+	const A = cubie.index.x == i-off;
+	const B = cubie.index.y == j-off;
+	const C = cubie.index.z == k-off;
+	const a = !A;
+	const b = !B;
+	const c = !C;
+	
 	// for now, keep it simple
-	if (cubie.index.x == i-off && cubie.index.y == j-off && cubie.index.z == k-off)
-		score++;
+	// if spots are in the right location, add a point
+	if ( A && B && C )
+		score += locationScore;
 	// if (cubie.normal.x == 1 && cubie.index.y == 0 && cubie.index.z == 0)
 		// score++;
+	// if two spots are in, add half a point
+	if ((A && B && c) || (A && b && C) || (a && B && C))
+		score += closeScore;
+	// if one spot is in, add a quarter points
+	if ((A && b && c) || (a && B && c) || (a && b && C))
+		score += nearScore;
+	
 	return score;
 }
 
