@@ -117,6 +117,10 @@ class PriorityQueue {
 		// which is each of the items in the priority queue
 		return this._hashTable.forEach((value, key) => f.call(this, key));
 	}
+	
+	size() {
+		return this._hashTable.size;
+	}
 
 	_cleanUp() {
 		// sparse array

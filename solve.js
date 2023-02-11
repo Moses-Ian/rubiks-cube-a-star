@@ -3,7 +3,7 @@ import { IdealizedRubik } from './idealizedRubik.js';
 import { PriorityQueue } from './PriorityQueue.js';
 
 // optional parameters
-const BREAK_POINT = 1000;
+const BREAK_POINT = 2000;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
 const turnScore = 1;
@@ -31,7 +31,7 @@ function solve(r) {
 	let access = 0;
 	
 	// create the sets
-	let openSet = new PriorityQueue(IdealizedRubik.comparePriority);
+	let openSet = new PriorityQueue(rubik => rubik.f);
 	let closedSet = [];
 	if (ATTACH_TO_WINDOW) {
 		window.openSet = openSet;
@@ -74,8 +74,8 @@ function solve(r) {
 		removes++;
 		
 		// if (closedSet.length % 10 == 0) {
-			console.log(`score = ${current.score} g = ${current.g} f = ${current.f}`);
-			console.log(openSet.size(), closedSet.length);
+			// console.log(`score = ${current.score} g = ${current.g} f = ${current.f}`);
+			// console.log(openSet.size(), closedSet.length);
 		// }
 		
 		// check whether we're done
@@ -121,20 +121,41 @@ function solve(r) {
 			// set g score
 			let g = current.g + turnScore;
 			// check every element in the queue's underlying heap and compare it
-			for(let i=0; i<openSet.size(); i++) {
-				start = performance.now();
-				result = openSet._heap[i].equals(neighbor);
-				end = performance.now();
-				openOperationsTime += end-start
+			// for(let i=0; i<openSet.size(); i++) {
+				// start = performance.now();
+				// result = openSet._hashTable[i].equals(neighbor);
+				// end = performance.now();
+				// openOperationsTime += end-start
+				// access++;
+				// if (result) {
+					// access++;
+					// if (g > openSet._hashTable[i].g) 
+						// return;
+					// else
+						// break;
+				// }
+			// }
+			let addIt = true;
+			let other = null;
+			openSet.forEach(rubik => {
+				result = rubik.equals(neighbor);
 				access++;
 				if (result) {
-					access++;
-					if (g > openSet._heap[i].g) 
-						return;
+					if (g >= rubik.g) 
+						addIt = false;
 					else
-						break;
+						other = rubik;
 				}
-			}
+			});
+			
+			// if we don't add it, get out of here
+			if (!addIt)
+				return;
+			
+			// we got here faster than the other did -> remove the other
+			if (other != null)
+				openSet.remove(other);
+
 			neighbor.g = g;
 			
 			// set score
