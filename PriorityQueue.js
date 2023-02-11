@@ -86,6 +86,10 @@ class PriorityQueue {
 		this._rootList = this._rootList.concat(node.children);
 		node.children.forEach(child => child.parent = null);
 		
+		// if it was in the root list, we're done
+		if (node.parent == null)
+			return;
+		
 		// remove this node from the parent's list of children
 		let parent = node.parent;
 		let index = parent.children.indexOf(node);
@@ -171,6 +175,10 @@ class PriorityQueue {
 	}
 	
 	_cutOut(node) {
+		// we never need to cut out a node in the root list
+		if (node.parent == null)
+			return;
+		
 		// since it was cut out, we can reset the mark
 		node.marked = false;
 		

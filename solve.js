@@ -1,6 +1,7 @@
 import { Rubik } from './rubik.js';
 import { IdealizedRubik } from './idealizedRubik.js';
 import { PriorityQueue } from './PriorityQueue.js';
+import { ClosedSet } from './ClosedSet.js';
 
 // optional parameters
 const BREAK_POINT = 2000;
@@ -32,7 +33,7 @@ function solve(r) {
 	
 	// create the sets
 	let openSet = new PriorityQueue(rubik => rubik.f);
-	let closedSet = [];
+	let closedSet = new ClosedSet();
 	if (ATTACH_TO_WINDOW) {
 		window.openSet = openSet;
 		window.closedSet = closedSet;
@@ -73,9 +74,9 @@ function solve(r) {
 		openOperationsTime += end-start;
 		removes++;
 		
-		// if (closedSet.length % 10 == 0) {
+		// if (closedSet.size % 10 == 0) {
 			// console.log(`score = ${current.score} g = ${current.g} f = ${current.f}`);
-			// console.log(openSet.size(), closedSet.length);
+			// console.log(openSet.size(), closedSet.size);
 		// }
 		
 		// check whether we're done
@@ -101,7 +102,7 @@ function solve(r) {
 		// removes++;
 		
 		start = performance.now();
-		closedSet.push(current);
+		closedSet.add(current);
 		end = performance.now();
 		closedOperationsTime += end-start;
 		
@@ -109,14 +110,20 @@ function solve(r) {
 		current.addNeighbors();
 		current.neighbors.forEach(neighbor => {
 			// if it's already in the closed set, leave
-			for(let i=0; i<closedSet.length; i++) {
-				start = performance.now();
-				result = closedSet[i].equals(neighbor);
-				end = performance.now();
-				closedOperationsTime += end-start;
-				if (result)
-					return;
-			}
+			// for(let i=0; i<closedSet.length; i++) {
+				// start = performance.now();
+				// result = closedSet[i].equals(neighbor);
+				// end = performance.now();
+				// closedOperationsTime += end-start;
+				// if (result)
+					// return;
+			// }
+			start = performance.now();
+			let result = closedSet.has(neighbor);
+			end = performance.now();
+			closedOperationsTime += end-start;
+			if (result)
+				return;
 			
 			// set g score
 			let g = current.g + turnScore;
@@ -200,14 +207,14 @@ function solve(r) {
 		
 		
 		
-		if (closedSet.length == BREAK_POINT)
+		if (closedSet.size == BREAK_POINT)
 			break;
 	}
 	if (!solveEnd) {
 		solveEnd = performance.now();
 		console.log(`Could not find solution`);
 	}
-	console.log(openSet.size(), closedSet.length);
+	console.log(openSet.size(), closedSet.size);
 	console.log(`solve run time = ${solveEnd-solveStart}`);
 	console.log(`equals run time = ${equalTime}`);
 	console.log(`open operations run time = ${openOperationsTime}`);
