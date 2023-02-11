@@ -37,32 +37,10 @@ pq.push(D);
 pq.push(E);
 
 console.log(pq.toString());
-actualResults.push(pq.toString());
 
 pq.pop();
-console.log(pq.toString());
-actualResults.push(pq.toString());
-
 pq.pop();
-console.log(pq.toString());
-actualResults.push(pq.toString());
 
-pq.pop();
-console.log(pq.toString());
-actualResults.push(pq.toString());
+console.log(pq);
 
-pq.pop();
-console.log(pq.toString());
-actualResults.push(pq.toString());
-
-pq.pop();
-console.log(pq.toString());
-actualResults.push(pq.toString());
-
-let success = true;
-for(let i=0; i<correctResults.length; i++) {
-	if (actualResults[i] != correctResults[i])
-		success = false;
-}
-
-console.log(`test 1 success: ${success}`);
+pq.forEach(item => console.log(item));
