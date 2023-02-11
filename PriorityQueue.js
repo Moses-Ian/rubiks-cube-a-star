@@ -1,70 +1,72 @@
-//https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript
-const top = 0;
-const parent = i => ((i + 1) >>> 1) - 1;
-const left = i => (i << 1) + 1;
-const right = i => (i + 1) << 1;
+// https://www.youtube.com/watch?v=6JxvKfSV9Ns
+// the rootList and children should be a linked list, but i can't be assed to learn how to implent those too
 
 class PriorityQueue {
-  constructor(comparator = (a, b) => a > b) {
-    this._heap = [];
-    this._comparator = comparator;
-  }
-  size() {
-    return this._heap.length;
-  }
-  isEmpty() {
-    return this.size() == 0;
-  }
-  peek() {
-    return this._heap[top];
-  }
-  push(...values) {
-    values.forEach(value => {
-      this._heap.push(value);
-      this._siftUp();
-    });
-    return this.size();
-  }
-  pop() {
-    const poppedValue = this.peek();
-    const bottom = this.size() - 1;
-    if (bottom > top) {
-      this._swap(top, bottom);
-    }
-    this._heap.pop();
-    this._siftDown();
-    return poppedValue;
-  }
-  replace(value) {
-    const replacedValue = this.peek();
-    this._heap[top] = value;
-    this._siftDown();
-    return replacedValue;
-  }
-  _greater(i, j) {
-    return this._comparator(this._heap[i], this._heap[j]);
-  }
-  _swap(i, j) {
-    [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
-  }
-  _siftUp() {
-    let node = this.size() - 1;
-    while (node > top && this._greater(node, parent(node))) {
-      this._swap(node, parent(node));
-      node = parent(node);
-    }
-  }
-  _siftDown() {
-    let node = top;
-    while (
-      (left(node) < this.size() && this._greater(left(node), node)) ||
-      (right(node) < this.size() && this._greater(right(node), node))
-    ) {
-      let maxChild = (right(node) < this.size() && this._greater(right(node), left(node))) ? right(node) : left(node);
-      this._swap(node, maxChild);
-      node = maxChild;
-    }
-  }
+	constructor() {
+		this.smallest = null;
+		this.smallestIndex = null;
+		this.rootList = [];
+	}
+	
+	pop() {
+		// prepare smallest value for returning
+		let result = this.smallest;
+		
+		// remove the smallest from the root list
+		this.rootList.splice(this.smallestIndex, 1);
+		
+		// add the children to the root list
+		this.rootList.concat(this.smallest.children);
+		
+		// find the new smallest
+		let smallestValue = this.rootList[0].value;
+		let smallestIndex = 0;
+		this.rootList.forEach((item, index) => {
+			if (item.value < smallestValue) {
+				smallestValue = item.value;
+				smallestIndex = index;
+			}
+		});
+		
+		// set the new smallest
+		this.smallest = this.rootList[smallestIndex];
+		this.smallestIndex = smallestIndex;
+		
+		// return the smallest
+		return result;
+	}
+	
+	peek() {
+		return this.smallest;
+	}
+	
+	push(item) {
+		// add it to the root list
+		this.rootList.push(item);
+		
+		// update the pointer if this element is smaller
+		if (item.value < this.smallest.value) {
+			this.smallest = item.value;
+			this.smallestIndex = this.rootList.length-1;
+		}
+	}
+	
+	toString() {
+		return "this is a priority queue";
+	}
 }
 
-export { PriorityQueue }
+class Node {
+	constructor() {
+		this.value = 9999;
+		this.parent = null;
+		this.children = [];
+		
+	}
+	
+	toString() {
+		return `(${this.value})`;
+	}
+}
+
+export { PriorityQueue };

@@ -2,10 +2,12 @@
   "name": "rubiks-cube-a-star",
   "version": "1.0.0",
   "description": "An A* algorithm for solving a Rubik's Cube",
+	"type": "module",
   "scripts": {
     "start": "five-server . -p 8000",
     "deploy": "gh-pages -d .",
-    "start-p5": "cd p5-version && browser-sync start --server -f -w"
+    "start-p5": "cd p5-version && browser-sync start --server -f -w",
+		"test": "node tests/PriorityQueue.test.js"
   },
   "keywords": [],
   "author": "Ian Moses",
