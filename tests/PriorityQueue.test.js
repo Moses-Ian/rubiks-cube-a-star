@@ -1,3 +1,11 @@
+//------Time Trials--------//
+// operations - priority queue - basic array - ratio
+//          1 - 0.224999994039 - 0.006400004 - 35.156226935
+//         10 - 0.361299991607 - 0.111999988 - 3.2258931118
+//        100 - 1.324299991130 - 6.732899993 - 0.1966908750
+//       1000 - 6.958099991083 - 386.4852000 - 0.0180035354
+//      10000 - 54.58910000324 - 39973.01529 - 0.0013656487
+
 import { PriorityQueue } from '../PriorityQueue.js';
 
 class Item {
@@ -10,37 +18,44 @@ let valueFunc = item => item.score;
 
 let pq = new PriorityQueue(valueFunc)
 
-// test 1
-let correctResults = [
-	'(15) - (35) - {13} - (21) - (18)',
-	'{15} - (35) - (21) - (18)',
-	'(35) - (21) - {18}',
-	'(35) - {21}',
-	'{35}',
-	'empty'
-];
+const operations = 10000;
 
-let actualResults = [];
+let start = performance.now();
 
-console.log(pq.toString());
+// priority queue
+for(let j=0; j<operations; j++) {
+	for(let i=0; i<12; i++) {
+		pq.push(new Item(Math.random() * 10000));
+	}
+	pq.pop();
+}
 
-let A = new Item(15);
-let B = new Item(35);
-let C = new Item(13);
-let D = new Item(21);
-let E = new Item(18);
+let end = performance.now();
+let pqTime = end-start;
 
-pq.push(A);
-pq.push(B);
-pq.push(C);
-pq.push(D);
-pq.push(E);
+console.log(`pq runtime=  ${pqTime}`);
 
-console.log(pq.toString());
 
-pq.pop();
-pq.pop();
+let arr = [];
+start = performance.now();
 
-console.log(pq);
+// basic array
+for(let j=0; j<operations; j++) {
+	for(let i=0; i<12; i++) {
+		arr.push(new Item(Math.random() * 10000));
+	}
 
-pq.forEach(item => console.log(item));
+	let smallestIndex = 0;
+	for(let index=0; index<arr.length-1; index++) {
+		if (arr[index] < arr[smallestIndex])
+			smallestIndex = index;
+	}
+	arr.splice(smallestIndex, 1);
+}
+
+end = performance.now();
+let arrTime = end-start;
+
+console.log(`arr runtime= ${arrTime}`);
+
+console.log(`ratio= ${pqTime/arrTime}`);
