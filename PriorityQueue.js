@@ -2,15 +2,16 @@
 // the rootList and children should be a linked list, but i can't be assed to learn how to implent those too
 
 class PriorityQueue {
-	constructor() {
+	constructor(getValue) {
 		this.smallest = null;
 		this.smallestIndex = null;
 		this.rootList = [];
+		this.getValue = getValue;	// a function
 	}
 	
 	pop() {
 		// prepare smallest value for returning
-		let result = this.smallest;
+		let result = this.smallest.item;
 		
 		// remove the smallest from the root list
 		this.rootList.splice(this.smallestIndex, 1);
@@ -19,11 +20,17 @@ class PriorityQueue {
 		this.rootList.concat(this.smallest.children);
 		
 		// find the new smallest
+		if (!this.rootList.length) {
+			this.smallest = null;
+			this.smallestIndex = null;
+			return result;
+		}
+		
 		let smallestValue = this.rootList[0].value;
 		let smallestIndex = 0;
-		this.rootList.forEach((item, index) => {
-			if (item.value < smallestValue) {
-				smallestValue = item.value;
+		this.rootList.forEach((node, index) => {
+			if (node.value < smallestValue) {
+				smallestValue = node.value;
 				smallestIndex = index;
 			}
 		});
@@ -37,34 +44,49 @@ class PriorityQueue {
 	}
 	
 	peek() {
-		return this.smallest;
+		return this.smallest.item;
 	}
 	
 	push(item) {
+		let newNode = new Node(item, this.getValue(item));
+		
 		// add it to the root list
-		this.rootList.push(item);
+		this.rootList.push(newNode);
 		
 		// update the pointer if this element is smaller
-		if (item.value < this.smallest.value) {
-			this.smallest = item.value;
+		if (this.smallest == null || newNode.value < this.smallest.value) {
+			this.smallest = newNode;
 			this.smallestIndex = this.rootList.length-1;
 		}
+		
+		console.log('push: ' + this.smallest.toString(true));
 	}
 	
 	toString() {
-		return "this is a priority queue";
+		if (!this.rootList.length)
+			return 'empty';
+		let result = "";
+		for(let i=0; i<this.rootList.length; i++) {
+			result += this.rootList[i].toString(i == this.smallestIndex);
+			if (i < this.rootList.length-1)
+				result += " - ";
+		}
+
+		return result;
 	}
 }
 
 class Node {
-	constructor() {
-		this.value = 9999;
+	constructor(item, value, parent=null) {
+		this.item = item;
+		this.value = value;
 		this.parent = null;
 		this.children = [];
-		
 	}
 	
-	toString() {
+	toString(smallest=false) {
+		if (smallest)		
+			return `{${this.value}}`;
 		return `(${this.value})`;
 	}
 }
