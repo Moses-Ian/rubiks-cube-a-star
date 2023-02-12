@@ -14,48 +14,59 @@ class Item {
 	}
 }
 
-let valueFunc = item => item.score;
+let test = () => {
+	let valueFunc = item => item.score;
 
-let pq = new PriorityQueue(valueFunc)
+	let pq = new PriorityQueue(valueFunc)
 
-const operations = 10000;
+	const operations = 1000;
 
-let start = performance.now();
+	let start = performance.now();
 
-// priority queue
-for(let j=0; j<operations; j++) {
-	for(let i=0; i<12; i++) {
-		pq.push(new Item(Math.random() * 10000));
+	// priority queue
+	for(let j=0; j<operations; j++) {
+		for(let i=0; i<12; i++) {
+			pq.push(new Item(Math.random() * 10000));
+		}
+		pq.pop();
 	}
-	pq.pop();
-}
-
-let end = performance.now();
-let pqTime = end-start;
-
-console.log(`pq runtime=  ${pqTime}`);
-
-
-let arr = [];
-start = performance.now();
-
-// basic array
-for(let j=0; j<operations; j++) {
-	for(let i=0; i<12; i++) {
-		arr.push(new Item(Math.random() * 10000));
+	
+	for(let j=0; j<operations; j++) {
+		for(let i=0; i<3; i++)
+			pq.removeRandom();
+		for(let i=0; i<3; i++)
+			pq.pop();
 	}
 
-	let smallestIndex = 0;
-	for(let index=0; index<arr.length-1; index++) {
-		if (arr[index] < arr[smallestIndex])
-			smallestIndex = index;
+	let end = performance.now();
+	let pqTime = end-start;
+
+	console.log(`pq runtime=  ${pqTime}`);
+
+
+	let arr = [];
+	start = performance.now();
+
+	// basic array
+	for(let j=0; j<operations; j++) {
+		for(let i=0; i<12; i++) {
+			arr.push(new Item(Math.random() * 10000));
+		}
+
+		let smallestIndex = 0;
+		for(let index=0; index<arr.length-1; index++) {
+			if (arr[index] < arr[smallestIndex])
+				smallestIndex = index;
+		}
+		arr.splice(smallestIndex, 1);
 	}
-	arr.splice(smallestIndex, 1);
-}
 
-end = performance.now();
-let arrTime = end-start;
+	end = performance.now();
+	let arrTime = end-start;
 
-console.log(`arr runtime= ${arrTime}`);
+	console.log(`arr runtime= ${arrTime}`);
 
-console.log(`ratio= ${pqTime/arrTime}`);
+	console.log(`ratio= ${pqTime/arrTime}`);
+};
+
+document.getElementById("start-test").addEventListener("click", test);

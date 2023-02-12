@@ -19,6 +19,10 @@ let perfectScore = getScore(endRubik);
 
 function solve(r) {
 	console.log('/----- solve -----/');
+	//html nonsense
+	document.getElementById("done").style.display = "none";
+	document.getElementById("solving").style.display = "block";
+	
 	let solveStart = performance.now();
 	let solveEnd;
 	let equalTime = 0;
@@ -42,15 +46,11 @@ function solve(r) {
 	
 	// get started
 	let startRubik = new IdealizedRubik(r);
-	// start = performance.now();
 	openSet.push(startRubik);
-	// end = performance.now();
-	// openOperationsTime += end-start;
-	// adds++;
 	
 	// set a starting score -> you get no points for your starting position
 	const startScore = getScore(startRubik);
-	// startRubik.score = startScore;
+	startRubik.score = 0;
 	perfectScore = getScore(endRubik) - startScore;
 	console.log(`perfect score = ${perfectScore}`);
 	
@@ -58,16 +58,13 @@ function solve(r) {
 	while(openSet.size()) {
 		
 		//find the lowest f aka highest score
-		// start = performance.now();
 		let current = openSet.pop();
-		if (current.halt)
-			break;
-		// end = performance.now();
-		// openOperationsTime += end-start;
-		// removes++;
+		// console.log(current);
+		// let nearBy = openSet.getClose();
+		// console.log(nearBy);
 		
 		// if (closedSet.size % 10 == 0) {
-			// console.log(`score = ${current.score} g = ${current.g} f = ${current.f}`);
+		// console.log(`score = ${current.score} g = ${current.g} h = ${current.h} f = ${current.f}`);
 			// console.log(openSet.size(), closedSet.size);
 		// }
 		
@@ -75,10 +72,7 @@ function solve(r) {
 			gWatermark = current.g;
 		
 		// check whether we're done
-		// start = performance.now();
 		let result = current.equals(endRubik);
-		// end = performance.now();
-		// equalTime += end-start;
 		if (result) {
 			solveEnd = performance.now();
 			
@@ -90,19 +84,16 @@ function solve(r) {
 		}
 		
 		// move it to the other set
-		// start = performance.now();
 		closedSet.add(current);
-		// end = performance.now();
-		// closedOperationsTime += end-start;
 		
 		// create neighbors
 		current.addNeighbors();
 		current.neighbors.forEach(neighbor => {
+			// set score
+			neighbor.score = getScore(neighbor) - startScore;
+
 			// if it's already in the closed set, leave
-			// start = performance.now();
 			let result = closedSet.has(neighbor);
-			// end = performance.now();
-			// closedOperationsTime += end-start;
 			if (result)
 				return;
 			
@@ -113,7 +104,6 @@ function solve(r) {
 			let other = null;
 			openSet.forEach(rubik => {
 				result = rubik.equals(neighbor);
-				access++;
 				if (result) {
 					if (g >= rubik.g) 
 						addIt = false;
@@ -130,10 +120,10 @@ function solve(r) {
 			if (other != null)
 				openSet.remove(other);
 
+			// set g
 			neighbor.g = g;
 			
-			// set score
-			neighbor.score = getScore(neighbor) - startScore;
+			// set h
 			neighbor.h = perfectScore - neighbor.score;
 
 			// set f
@@ -143,12 +133,7 @@ function solve(r) {
 			neighbor.previousRubik = current;
 			
 			// add it to the open set
-			// start = performance.now();
 			openSet.push(neighbor);
-			// end = performance.now();
-			// openOperationsTime += end-start;
-			// adds++;
-			
 		});
 		
 		// escape if it's taking too long
@@ -169,6 +154,12 @@ function solve(r) {
 	// console.log(`closed operations run time = ${closedOperationsTime}`);
 	// console.log(`adds = ${adds} removes = ${removes} accesses = ${access}`);
 	
+	//html nonsense
+	document.getElementById("done").style.display = "block";
+	document.getElementById("solving").style.display = "none";
+	
+	// attempt to force garbage collection
+	let hello = "hello";
 }
 
 function getScore(current) {
@@ -205,8 +196,8 @@ function getCubieScore(current, i, j, k) {
 		score += nearScore;
 
 	// if spots are in the right location and orientation
-	if (A && B && C && cubie.normal.x && !cubie.index.y && !cubie.index.z)
-		score++;
+	// if (A && B && C && cubie.normal.x && !cubie.index.y && !cubie.index.z)
+		// score++;
 	
 	return score;
 }
@@ -231,4 +222,4 @@ function showThePath(r, current) {
 
 
 
-export {solve};
+export {solve, getScore};

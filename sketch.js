@@ -3,10 +3,12 @@ import { OrbitControls } from 'three/addons/OrbitControls.js';
 import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
 import { Turn } from './turn.js';
-import { solve } from './solve.js';
+import { solve, getScore } from './solve.js';
+import { IdealizedRubik } from './IdealizedRubik.js';
 
 let width = 400;
 let height = 400;
+let oldScore = 0;
 
 // create the renderer
 const renderer = new THREE.WebGLRenderer();
@@ -43,6 +45,12 @@ function animate() {
 	
 	// do things
 	rubik.updateFrame();
+	
+	// get the score
+	let score = getScore(new IdealizedRubik(rubik));
+	if (score != oldScore)
+		document.getElementById("score").innerHTML = `score = ${score}`;
+	oldScore = score;
 	
 	renderer.render( scene, camera );
 }

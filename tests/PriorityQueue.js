@@ -38,7 +38,6 @@ class PriorityQueue {
 		this._updateSmallest();
 
 		// debugger;
-		return item;
 	}
 	
 	peek() {
@@ -61,7 +60,6 @@ class PriorityQueue {
 			this._smallest = newNode;
 			this._smallestIndex = this._rootList.length-1;
 		}
-
 	}
 	
 	remove(item) {
@@ -114,12 +112,6 @@ class PriorityQueue {
 	
 	size() {
 		return this._hashTable.size;
-	}
-	
-	// returns an array of items that are close to being the smallest
-	// it's the root list, so it won't necessarily be the next N smallest
-	getClose() {
-		return this._rootList.map(node => node.item);
 	}
 
 	_cleanUp() {

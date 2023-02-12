@@ -26,6 +26,7 @@ class IdealizedRubik {
 	constructor(rubik) {
 		// each cube has a value function
 		this.score = 0;		// better score == closer to ideal cube
+		this.f = 0;
 		this.g = 0;
 		this.h = 0;
 		this.neighbors = [];
