@@ -11,21 +11,69 @@ class PriorityQueue {
 	}
 	
 	pop() {
+		let halt = false;
+		// console.log('pop');
+		if (this._smallest.parent != null)
+			console.log(this._smallest);
+		
+		this._smallest.operations.push('pop');
+		
 		// prepare _smallest value for returning
 		let result = this._smallest.item;
+		let saved = this._smallest;
 		
 		// remove the _smallest from the root list
+		let thisIndex = this._rootList.indexOf(this._smallest);
+		if (thisIndex != this._smallestIndex)
+			console.log('index mismatch');
+		let size = this._rootList.length;
 		this._rootList.splice(this._smallestIndex, 1);
+		if (this._rootList.includes(this._smallest))
+			console.log(`smallest not deleted ${size} -> ${this._rootList.length}`);
+			
 		
 		// remove the _smallest from the hash table
+		if (!this._hashTable.has(result)) {
+			console.log('item not in hash table');
+			console.log(this._smallest);
+			this._find(this._smallest);
+			return true;
+		}
+		
+		let count = this._hashTable.size;
 		this._hashTable.delete(result);
+		let count2 = this._hashTable.size;
+		// if (count == count2)
+			// console.log('not deleting from hash table');
 		
 		// add the children to the root list
-		this._rootList = this._rootList.concat(this._smallest.children);
-		this._smallest.children.forEach(child => child.parent = null);
+		try {
+			// if(this._smallest.children.length > 100) {
+				// console.log(this._smallest);
+				// console.trace();
+				// return;
+			// }
+			this._smallest.children.forEach(child => this._moveToRoot(child));
+			this._rootList.forEach(node => {
+				if (node.parent != null) {
+					console.log('root node still has a parent');
+					halt =true;
+				}
+			});
+			if (halt)
+				return true;
+		} catch (err) {
+			console.log('root list:');
+			console.log(this._rootList);
+			console.log('smallest:');
+			console.log(this._smallest);
+			throw (err);
+		}
 		
 		// start the clean up phase
-		this._cleanUp();
+		halt = this._cleanUp();
+		if (halt)
+			return {halt: true};
 		
 		// find the new _smallest
 		if (!this._rootList.length) {
@@ -47,6 +95,10 @@ class PriorityQueue {
 		this._smallest = this._rootList[_smallestIndex];
 		this._smallestIndex = _smallestIndex;
 		
+		if (this._find(saved)) {
+			console.log(saved);
+		}
+		
 		// return the _smallest
 		return result;
 	}
@@ -56,7 +108,11 @@ class PriorityQueue {
 	}
 	
 	push(item) {
+		
+		// console.log('push');
 		let newNode = new Node(item, this.getValue(item));
+		
+		newNode.operations.push('push');
 		
 		// add it to the root list
 		this._rootList.push(newNode);
@@ -73,7 +129,10 @@ class PriorityQueue {
 	}
 	
 	remove(item) {
+		// console.log('remove');
 		let node = this._hashTable.get(item);
+		
+		node.operations.push('remove');
 		
 		// if we're removing the _smallest, we need to pop it instead
 		if (node == this._smallest)
@@ -83,24 +142,7 @@ class PriorityQueue {
 		this._hashTable.delete(item);
 		
 		// add the children to the root list
-		this._rootList = this._rootList.concat(node.children);
-		node.children.forEach(child => child.parent = null);
-		
-		// if it was in the root list, we're done
-		if (node.parent == null)
-			return;
-		
-		// remove this node from the parent's list of children
-		let parent = node.parent;
-		let index = parent.children.indexOf(node);
-		parent.children.splice(index, 1);
-		
-		// and mark the parent...
-		if (!parent.marked)
-			parent.marked = true;
-		else
-			// if the parent was already marked, we have to cut it out
-			this._cutOut(parent);		
+		node.children.forEach(child => this._moveToRoot(child));
 	}
 	
 	toString() {
@@ -127,6 +169,22 @@ class PriorityQueue {
 	}
 
 	_cleanUp() {
+		let halt = false;
+		this._rootList.forEach(tree => {
+			tree.operations.push('cleanUp');
+			if (tree.parent == tree) {
+				console.log('it is its own parent');
+				console.log(tree);
+			}
+			if (tree.children.length > 100) {
+				console.log('too many children');
+				console.log(tree);
+				halt = true;
+			}
+		});
+		if (halt)
+			return true;
+		
 		// sparse array
 		let degreeArray = [];
 		
@@ -135,27 +193,41 @@ class PriorityQueue {
 		
 		// condense the sparse array
 		this._rootList = Object.values(degreeArray);
+		
+		// clear out all the parents of the nodes in the root list
+		this._rootList.forEach(node => node.parent = null);
 	}
 	
 	_addTree(tree, degreeArray) {
-			// if there's no tree in this slot, we can simply insert it here
-			if (degreeArray[tree.degree()] == null) {
-				degreeArray[tree.degree()] = tree;
-				return;
-			}
-			
-			// if there is a tree in this slot...
-			// ...pull the other one out of the array...
-			let other = degreeArray[tree.degree()];
-			
-			// ...be sure to delete the key from the object, or else things go haywire...
-			delete degreeArray[tree.degree()];
+		tree.operations.push('addTree');
+	
+		// if there's no tree in this slot, we can simply insert it here
+		if (degreeArray[tree.degree()] == null || degreeArray[tree.degree()] == undefined) {
+			degreeArray[tree.degree()] = tree;
+			return;
+		}
+		
+		// if there is a tree in this slot...
+		// ...pull the other one out of the array...
+		let other = degreeArray[tree.degree()];
+		
+		if (tree == other) {
+			return;
+			console.log('BAD THINGS ARE HAPPENING');
+			// console.log(tree);
+			// console.trace();
+		}
+		
+		// ...be sure to delete the key from the object, or else things go haywire...
+		let result = delete degreeArray[tree.degree()];
+		if (!result)
+			console.log('did not delete');
 
-			// ...and merge them
-			tree = this._mergeTrees(tree, other);
-			
-			// recursively add it
-			this._addTree(tree, degreeArray);
+		// ...and merge them
+		tree = this._mergeTrees(tree, other);
+		
+		// recursively add it
+		this._addTree(tree, degreeArray);
 	}
 	
 	_mergeTrees(a, b) {
@@ -166,6 +238,9 @@ class PriorityQueue {
 			b = temp;
 		}
 		
+		a.operations.push('mergeTrees (A)');
+		b.operations.push('mergeTrees (B)');
+		
 		// attach b to a
 		b.parent = a;
 		a.children.push(b);
@@ -175,27 +250,56 @@ class PriorityQueue {
 	}
 	
 	_cutOut(node) {
-		// we never need to cut out a node in the root list
-		if (node.parent == null)
-			return;
+		node.operations.push('cutOut');
 		
 		// since it was cut out, we can reset the mark
 		node.marked = false;
 		
-		// add it to the root list
+		this._moveToRoot(node);
+	}
+
+	_moveToRoot(node) {
+		// attach it to the root
 		this._rootList.push(node);
 		
-		// remove this node from the parent's list of children
+		// unmark it
+		node.marked = false;
+		
+		// get the parent reference
 		let parent = node.parent;
+
+		// if it has no parent, return
+		if (parent == null)
+			return;
+
+		// remove it's reference to it's parent
+		node.parent = null;
+		
+		// remove the parent's reference to it
 		let index = parent.children.indexOf(node);
 		parent.children.splice(index, 1);
 		
-		// and mark the parent...
+		// mark the parent
 		if (!parent.marked)
 			parent.marked = true;
 		else
 			// if the parent was already marked, we have to cut it out
 			this._cutOut(parent);		
+	}
+
+	_find(node) {
+		console.log('trying to find it');
+		for(let i=0; i<this._rootList.length; i++) {
+			if (this._rootList[i] == node) {
+				console.log(`it is _rootList[${i}]`);
+				console.log(this._rootList[i]);
+				return true;
+			}
+			let result = this._rootList[i].find(node);
+			if (result) {
+				return true;
+			}
+		}
 	}
 }
 
@@ -205,6 +309,7 @@ class Node {
 		this.value = value;
 		this.parent = null;
 		this.children = [];
+		this.operations = []
 	}
 	
 	degree() {
@@ -215,6 +320,17 @@ class Node {
 		if (_smallest)		
 			return `{${this.value}}`;
 		return `(${this.value})`;
+	}
+	
+	find(node) {
+		for(let i=0; i<this.children.length; i++) {
+			if (this.children[i] == node) {
+				return true;
+			}
+			let result = this.children[i].find(node);
+			if (result)
+				return true;
+		}
 	}
 }
 
