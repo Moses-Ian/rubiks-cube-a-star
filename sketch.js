@@ -59,7 +59,7 @@ function animate() {
 	// get the score
 	let score = getScore(new IdealizedRubik(rubik));
 	if (score.score != oldScore) {
-		console.log(score);
+		// console.log(score);
 		keys.forEach(key => 
 			document.getElementById(key).innerHTML = `${key} = ${score[key]}`
 		);

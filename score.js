@@ -5,6 +5,7 @@ class Score {
 		this.cubiesWithCorrectNeighbors = 0;
 		this.cubieClose = 0;
 		this.cubieNear = 0;
+		this.loneCubies = 0;
 	}
 	
 	merge(score) {
@@ -13,6 +14,7 @@ class Score {
 		this.cubiesWithCorrectNeighbors += score.cubiesWithCorrectNeighbors;
 		this.cubieClose += score.cubieClose;
 		this.cubieNear += score.cubieNear;
+		this.loneCubies += score.loneCubies;
 	}
 }
 

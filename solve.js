@@ -6,7 +6,7 @@ import { Cubie } from './cubie.js';
 import { Score } from './score.js';
 
 // optional parameters
-const BREAK_POINT = 4;
+const BREAK_POINT = 5;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
 const turnScore = 1;
@@ -14,6 +14,7 @@ const locationScore = 1;
 const closeScore = 0.76;
 const nearScore = 0.25;
 const correctNeighborScore = .6;
+const loneCubiePenalty = -6;
 const scoreWeight = 1;	// bigger is less impactful
 
 // important values
@@ -96,11 +97,11 @@ function solve(r) {
 		current.neighbors.forEach(neighbor => {
 			// set score
 			neighbor.score = getScore(neighbor).score - startScore;
-			console.log(neighbor);
+			// console.log(neighbor);
 
 			// if it's already in the closed set, leave
 			let result = closedSet.has(neighbor);
-			console.log(result);
+			// console.log(result);
 			if (result)
 				return;
 			
@@ -244,7 +245,7 @@ function getCubieScore(current, i, j, k) {
 		Math.abs(cubie.index.z - n.index.z)
 	);
 	
-	let neighborScore = 1;
+	let neighborScore = 0;
 	
 	distances.forEach(d => {
 		if (d == 1) {
@@ -252,6 +253,11 @@ function getCubieScore(current, i, j, k) {
 			score.cubiesWithCorrectNeighbors++;
 		}
 	});
+	
+	if (neighborScore == 0) {
+		score.score += loneCubiePenalty;
+		score.loneCubies++;
+	}
 	
 	score.score += neighborScore;
 	
