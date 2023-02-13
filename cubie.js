@@ -8,6 +8,14 @@ class Cubie {
 	constructor(indexX, indexY, indexZ, normalX, normalY, normalZ) {
 		this.index = new THREE.Vector3(indexX, indexY, indexZ);
 		this.normal = new THREE.Vector3(normalX, normalY, normalZ);
+		// this is only true for size 3 cubes
+		this.type;
+		if (!indexX && !indexY || !indexX && !indexZ || !indexY && !indexZ)
+			this.type = 'center';
+		else if ((indexX + indexY + indexZ ) % 2)
+			this.type = 'corner';
+		else
+			this.type = 'edge';
 	}
 	
 	equals(other, log = false) {
@@ -119,6 +127,19 @@ class Cubie {
 	static update() {
 		this.index.round();
 		this.normal.round();
+	}
+	
+	static getNeighbors(cube, x, y, z) {
+		let arr = [];
+		
+		if (x != 0) arr.push(cube[x-1][y][z]);
+		if (x != 2) arr.push(cube[x+1][y][z]);
+		if (y != 0) arr.push(cube[x][y-1][z]);
+		if (y != 2) arr.push(cube[x][y+1][z]);
+		if (z != 0) arr.push(cube[x][y][z-1]);
+		if (z != 2) arr.push(cube[x][y][z+1]);
+
+		return arr;
 	}
 	
 }

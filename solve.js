@@ -2,20 +2,23 @@ import { Rubik } from './rubik.js';
 import { IdealizedRubik } from './idealizedRubik.js';
 import { PriorityQueue } from './PriorityQueue.js';
 import { ClosedSet } from './ClosedSet.js';
+import { Cubie } from './cubie.js';
+import { Score } from './score.js';
 
 // optional parameters
-const BREAK_POINT = 3000;
+const BREAK_POINT = 4;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
 const turnScore = 1;
 const locationScore = 1;
-const closeScore = 0.5;
+const closeScore = 0.76;
 const nearScore = 0.25;
+const correctNeighborScore = .6;
 const scoreWeight = 1;	// bigger is less impactful
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
-let perfectScore = getScore(endRubik);
+let perfectScore = getScore(endRubik).score;
 
 function solve(r) {
 	console.log('/----- solve -----/');
@@ -37,7 +40,8 @@ function solve(r) {
 	let access = 0;
 	
 	// create the sets
-	let openSet = new PriorityQueue(rubik => rubik.f);
+	// let openSet = new PriorityQueue(rubik => rubik.f);	// 'proper' heuristic
+	let openSet = new PriorityQueue(rubik => -rubik.score); // intuition
 	let closedSet = new ClosedSet();
 	if (ATTACH_TO_WINDOW) {
 		window.openSet = openSet;
@@ -49,17 +53,18 @@ function solve(r) {
 	openSet.push(startRubik);
 	
 	// set a starting score -> you get no points for your starting position
-	const startScore = getScore(startRubik);
+	const startScore = getScore(startRubik).score;
 	startRubik.score = 0;
-	perfectScore = getScore(endRubik) - startScore;
+	perfectScore = getScore(endRubik).score - startScore;
 	console.log(`perfect score = ${perfectScore}`);
 	
 	// while open set is not empty
 	while(openSet.size()) {
+		console.log('// ---- new cube ---- //');
 		
 		//find the lowest f aka highest score
 		let current = openSet.pop();
-		// console.log(current);
+		console.log(current);
 		// let nearBy = openSet.getClose();
 		// console.log(nearBy);
 		
@@ -90,10 +95,12 @@ function solve(r) {
 		current.addNeighbors();
 		current.neighbors.forEach(neighbor => {
 			// set score
-			neighbor.score = getScore(neighbor) - startScore;
+			neighbor.score = getScore(neighbor).score - startScore;
+			console.log(neighbor);
 
 			// if it's already in the closed set, leave
 			let result = closedSet.has(neighbor);
+			console.log(result);
 			if (result)
 				return;
 			
@@ -163,18 +170,18 @@ function solve(r) {
 }
 
 function getScore(current) {
-	let score = 0;
+	let score = new Score();
 	for(let i=0; i<3; i++)
 		for(let j=0; j<3; j++)
 			for(let k=0; k<3; k++)
-				score += getCubieScore(current, i, j, k);
+				score.merge(getCubieScore(current, i, j, k));
 	return score;
 }
 
 function getCubieScore(current, i, j, k) {
 	let off = current.offset;
 	let cubie = current.cube[i][j][k];
-	let score = 0;
+	let score = new Score();
 	
 	//store as bools
 	const A = cubie.index.x == i-off;
@@ -184,20 +191,69 @@ function getCubieScore(current, i, j, k) {
 	const b = !B;
 	const c = !C;
 	
-	// for now, keep it simple
 	// if spots are in the right location, add a point
-	if ( A && B && C )
-		score += locationScore;
-	// if two spots are in, add half a point
-	if ((A && B && c) || (A && b && C) || (a && B && C))
-		score += closeScore;
-	// if one spot is in, add a quarter points
-	if ((A && b && c) || (a && B && c) || (a && b && C))
-		score += nearScore;
+	if ( A && B && C ) {
+		score.score += locationScore;
+		score.cubiesInCorrectPosition++;
+	}
+
+	// if spots are one move away, add half a point
+	if (cubie.type == 'corner') {
+		if ((A && B && c) || (A && b && C) || (a && B && C)) {
+			score.score += closeScore;
+			score.cubieClose++;
+		}
+	}
+	else if (cubie.type == 'edge') {
+		if ((A && b && c) || (a && B && c) || (a && b && C)) {
+			score.score += closeScore;
+			score.cubieClose++;
+		}
+	}
+			
+	// if spots are two moves away, add a quarter point
+	if (cubie.type == 'corner') {
+		if ((A && b && c) || (a && B && c) || (a && b && C)) {
+			score.score += nearScore;
+			score.cubieNear++;
+		}
+	}
+	else if (cubie.type == 'edge') {
+		if ((A && B && c) || (A && b && C) || (a && B && C)) {
+			score.score += nearScore;
+			score.cubieNear++;
+		}
+	}
+		
+		
+		
 
 	// if spots are in the right location and orientation
 	// if (A && B && C && cubie.normal.x && !cubie.index.y && !cubie.index.z)
 		// score++;
+	
+	// am i next to the correct neighbor?
+	
+	// get the neighbors
+	let neighbors = Cubie.getNeighbors(current.cube, i, j, k);
+	
+	// for each neighbor, check the manhatten distance
+	let distances = neighbors.map(n => 
+		Math.abs(cubie.index.x - n.index.x) +
+		Math.abs(cubie.index.y - n.index.y) +
+		Math.abs(cubie.index.z - n.index.z)
+	);
+	
+	let neighborScore = 1;
+	
+	distances.forEach(d => {
+		if (d == 1) {
+			neighborScore += correctNeighborScore;
+			score.cubiesWithCorrectNeighbors++;
+		}
+	});
+	
+	score.score += neighborScore;
 	
 	return score;
 }

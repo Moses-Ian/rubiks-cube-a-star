@@ -5,10 +5,20 @@ import { Rubik } from './rubik.js';
 import { Turn } from './turn.js';
 import { solve, getScore } from './solve.js';
 import { IdealizedRubik } from './IdealizedRubik.js';
+import { Score } from './score.js';
 
 let width = 400;
 let height = 400;
-let oldScore = 0;
+let oldScore = -1;
+
+// create html objects
+let score = new Score();
+let keys = Object.keys(score);
+keys.forEach(key => {
+	let p = document.createElement('p');
+	p.id = key;
+	document.body.appendChild(p);
+});
 
 // create the renderer
 const renderer = new THREE.WebGLRenderer();
@@ -48,9 +58,13 @@ function animate() {
 	
 	// get the score
 	let score = getScore(new IdealizedRubik(rubik));
-	if (score != oldScore)
-		document.getElementById("score").innerHTML = `score = ${score}`;
-	oldScore = score;
+	if (score.score != oldScore) {
+		console.log(score);
+		keys.forEach(key => 
+			document.getElementById(key).innerHTML = `${key} = ${score[key]}`
+		);
+	}
+	oldScore = score.score;
 	
 	renderer.render( scene, camera );
 }
