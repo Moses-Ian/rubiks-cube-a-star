@@ -5,7 +5,13 @@ const ZERO2D = new THREE.Vector2(0, 0);
 
 
 class Cubie {
-	constructor(indexX, indexY, indexZ, normalX, normalY, normalZ) {
+	constructor(i, j, k, indexX, indexY, indexZ, normalX, normalY, normalZ) {
+		// this works only for size 3 cube
+		this.i = i;
+		this.j = j;
+		this.k = k;
+		
+		// actual values
 		this.index = new THREE.Vector3(indexX, indexY, indexZ);
 		this.normal = new THREE.Vector3(normalX, normalY, normalZ);
 		// this is only true for size 3 cubes
@@ -130,6 +136,7 @@ class Cubie {
 	}
 	
 	static getNeighbors(cube, x, y, z) {
+		// debugger;
 		let arr = [];
 		
 		if (x != 0) arr.push(cube[x-1][y][z]);
@@ -138,6 +145,22 @@ class Cubie {
 		if (y != 2) arr.push(cube[x][y+1][z]);
 		if (z != 0) arr.push(cube[x][y][z-1]);
 		if (z != 2) arr.push(cube[x][y][z+1]);
+		
+		
+		// remove the center squares
+		if (cube[x][y][z].type == 'edge') {
+			let center1 = cube[1][y][z];
+			let index1 = arr.indexOf(center1);
+			if (index1 != -1) arr.splice(index1, 1);
+			
+			let center2 = cube[x][1][z];
+			let index2 = arr.indexOf(center2);
+			if (index2 != -1) arr.splice(index2, 1);
+			
+			let center3 = cube[x][y][1];
+			let index3 = arr.indexOf(center3);
+			if (index3 != -1) arr.splice(index3, 1);
+		}
 
 		return arr;
 	}

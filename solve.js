@@ -6,16 +6,18 @@ import { Cubie } from './cubie.js';
 import { Score } from './score.js';
 
 // optional parameters
-const BREAK_POINT = 5;
+const BREAK_POINT = 1000;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
 const turnScore = 1;
 const locationScore = 1;
-const closeScore = 0.76;
-const nearScore = 0.25;
+const closeScore = 0.8;
+const nearScore = 0.15;
 const correctNeighborScore = .6;
 const loneCubiePenalty = -6;
+const lonePairPenalty = 0;	// remember that this gets doubled
 const scoreWeight = 1;	// bigger is less impactful
+const maxMoves = 5;
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
@@ -41,8 +43,8 @@ function solve(r) {
 	let access = 0;
 	
 	// create the sets
-	// let openSet = new PriorityQueue(rubik => rubik.f);	// 'proper' heuristic
-	let openSet = new PriorityQueue(rubik => -rubik.score); // intuition
+	let openSet = new PriorityQueue(rubik => rubik.f);	// 'proper' heuristic
+	// let openSet = new PriorityQueue(rubik => -rubik.score); // intuition
 	let closedSet = new ClosedSet();
 	if (ATTACH_TO_WINDOW) {
 		window.openSet = openSet;
@@ -61,11 +63,11 @@ function solve(r) {
 	
 	// while open set is not empty
 	while(openSet.size()) {
-		console.log('// ---- new cube ---- //');
+		// console.log('// ---- new cube ---- //');
 		
 		//find the lowest f aka highest score
 		let current = openSet.pop();
-		console.log(current);
+		// console.log(current);
 		// let nearBy = openSet.getClose();
 		// console.log(nearBy);
 		
@@ -107,6 +109,11 @@ function solve(r) {
 			
 			// set g score
 			let g = current.g + turnScore;
+			
+			// get out if it's too many moves
+			if (g > maxMoves)
+				return;
+			
 			// check every element in the queue's underlying heap and compare it
 			let addIt = true;
 			let other = null;
@@ -176,12 +183,22 @@ function getScore(current) {
 		for(let j=0; j<3; j++)
 			for(let k=0; k<3; k++)
 				score.merge(getCubieScore(current, i, j, k));
+	
+	// we have to account for the lonePairs being erroneously doubled
+	score.lonePairs /= 2.0;
+	
 	return score;
 }
 
 function getCubieScore(current, i, j, k) {
 	let off = current.offset;
 	let cubie = current.cube[i][j][k];
+	
+	if (cubie.i != i || cubie.j != j || cubie.k != k) {
+		debugger;
+	}
+	
+	
 	let score = new Score();
 	
 	//store as bools
@@ -245,21 +262,51 @@ function getCubieScore(current, i, j, k) {
 		Math.abs(cubie.index.z - n.index.z)
 	);
 	
-	let neighborScore = 0;
+	let correctDistances = distances.filter(d => d == 1);
+	// if (correctDistances == undefined) {
+		// debugger;
+	// }
+	let correctNeighbors = correctDistances.length;
+	score.cubiesWithCorrectNeighbors += correctNeighbors;
+	let neighborScore = correctNeighbors * correctNeighborScore;
+	score.score += neighborScore;
 	
-	distances.forEach(d => {
-		if (d == 1) {
-			neighborScore += correctNeighborScore;
-			score.cubiesWithCorrectNeighbors++;
-		}
-	});
-	
-	if (neighborScore == 0) {
+	// penalize for lone cubies
+	if (correctNeighbors == 0) {
+		// debugger;
 		score.score += loneCubiePenalty;
 		score.loneCubies++;
 	}
 	
-	score.score += neighborScore;
+	// check for lone pairs
+	// if i have only one neighbor, and that neighbor has only one neighbor
+	if (correctNeighbors == 1) {
+		// find that correct neighbor
+		let onlyNeighborIndex = distances.indexOf(1);
+		let onlyNeighbor = neighbors[onlyNeighborIndex];
+		
+		// get that neighbor's neighbors
+		let otherNeighbors = Cubie.getNeighbors(current.cube, onlyNeighbor.i, onlyNeighbor.j, onlyNeighbor.k);
+		
+		// for each neighbor, check the manhatten distance
+		let otherDistances = otherNeighbors.map(n => 
+			Math.abs(onlyNeighbor.index.x - n.index.x) +
+			Math.abs(onlyNeighbor.index.y - n.index.y) +
+			Math.abs(onlyNeighbor.index.z - n.index.z)
+		);
+		
+		// count the number of times the distance is one
+		correctDistances = otherDistances.filter(d => d == 1);
+		let correctDistanceCount = correctDistances.length;
+		
+
+		// if my only neighbor has exactly 1 correct neighbor
+		if (correctDistanceCount == 1) {
+			score.lonePairs++;
+			score.score += lonePairPenalty;
+		}
+	}
+	
 	
 	return score;
 }

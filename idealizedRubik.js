@@ -50,6 +50,8 @@ class IdealizedRubik {
 				for(let k=0; k<this.cubeSize; k++) {
 					let box = rubik.cube[i][j][k];
 					this.cube[i][j][k] = new Cubie(
+						//refs
+						i, j, k,
 						//indexes
 						box.index.x, box.index.y, box.index.z,
 						//normal
@@ -75,6 +77,8 @@ class IdealizedRubik {
 				cube[i][j] = new Array(cubeSize);
 				for(let k=0; k<cubeSize; k++) {
 					cube[i][j][k] = new Cubie(
+						//refs
+						i, j, k,
 						//indexes
 						i-offset, j-offset, k-offset,
 						//normal
@@ -190,6 +194,8 @@ class IdealizedRubik {
 				for(let k=0; k<cubeSize; k++) {
 					let c = this.cube[i][j][k];
 					cube[i][j][k] = new Cubie(
+						// refs
+						i, j, k,
 						//indexes
 						c.index.x, c.index.y, c.index.z,
 						//normal

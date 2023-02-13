@@ -11,6 +11,11 @@ class PriorityQueue {
 	}
 	
 	pop() {
+		if (this._smallest == null) {
+			if (this.size() == 0)
+				console.log('queue is empty');
+		}
+		
 		// debugger;
 		this._smallest.operations.push('pop');
 		if (this._smallest.hasMultiplePops()) 
