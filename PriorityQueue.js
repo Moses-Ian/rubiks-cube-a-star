@@ -16,13 +16,12 @@ class PriorityQueue {
 				console.log('queue is empty');
 		}
 		
-		// debugger;
 		this._smallest.operations.push('pop');
 		if (this._smallest.hasMultiplePops()) 
 			throw new hasMultiplePopsException(this._smallest);
 		
-		// get the orphaned child nodes
-		let children = this._smallest.children;
+		// get the orphaned child nodes -> _moveToRoot() will splice, so we must make a shallow copy
+		let children = [...this._smallest.children];
 		
 		// one by one, but them in the root list
 		children.forEach(child => this._moveToRoot(child));
@@ -42,7 +41,6 @@ class PriorityQueue {
 		// find the new minimum
 		this._updateSmallest();
 
-		// debugger;
 		return item;
 	}
 	
@@ -70,12 +68,11 @@ class PriorityQueue {
 	}
 	
 	remove(item) {
-		// debugger;
 		let node = this._hashTable.get(item);
 		node.operations.push('remove');
 		
 		// add the children to the root list one by one
-		let children = node.children;
+		let children = [...node.children];
 		children.forEach(child => this._moveToRoot(child));
 		
 		// maintain a reference to the parent
@@ -89,11 +86,11 @@ class PriorityQueue {
 			// remove the parent's reference to it
 			parent.children.splice(parent.children.indexOf(node), 1);
 		
-			// mark the parent, or cut it out if necessary
-			if (!parent.marked)
-				parent.marked = true;
-			else
-				this._cutOut(parent);
+		// mark the parent, or cut it out if necessary
+		if (!parent.marked)
+			parent.marked = true;
+		else
+			this._cutOut(parent);
 		}
 		
 		// delete its own reference to its parent
@@ -104,7 +101,6 @@ class PriorityQueue {
 		
 		this._updateSmallest();
 		
-		// debugger;
 	}
 	
 	toString() {
@@ -185,10 +181,8 @@ class PriorityQueue {
 		node.marked = false;
 	
 		// if we try to cut out a root node, bail
-		if (node.parent == null) {
-			console.log('tried to cut out a root node');
+		if (node.parent == null) 
 			return;
-		}
 		
 		// maintain a reference to the parent
 		let parent = node.parent;

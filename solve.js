@@ -6,10 +6,10 @@ import { Cubie } from './cubie.js';
 import { Score } from './score.js';
 
 // optional parameters
-const BREAK_POINT = 1000;
+const BREAK_POINT = 66;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
-const turnScore = 1;
+const turnScore = 6;
 const locationScore = 1;
 const closeScore = 0.8;
 const nearScore = 0.15;
@@ -17,7 +17,7 @@ const correctNeighborScore = .6;
 const loneCubiePenalty = -6;
 const lonePairPenalty = 0;	// remember that this gets doubled
 const scoreWeight = 1;	// bigger is less impactful
-const maxMoves = 5;
+const maxMoves = 50;
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
@@ -67,13 +67,13 @@ function solve(r) {
 		
 		//find the lowest f aka highest score
 		let current = openSet.pop();
-		// console.log(current);
+		console.log(current);
 		// let nearBy = openSet.getClose();
 		// console.log(nearBy);
 		
 		// if (closedSet.size % 10 == 0) {
-		// console.log(`score = ${current.score} g = ${current.g} h = ${current.h} f = ${current.f}`);
-			// console.log(openSet.size(), closedSet.size);
+			console.log(`score = ${current.score} g = ${current.g} h = ${current.h} f = ${current.f}`);
+			console.log(openSet.size(), closedSet.size);
 		// }
 		
 		if (current.g > gWatermark)
@@ -162,7 +162,7 @@ function solve(r) {
 		console.log(`Could not find solution`);
 	}
 	console.log(openSet.size(), closedSet.size);
-	console.log(`most moves tried= ${gWatermark}`);
+	console.log(`most moves tried= ${gWatermark / turnScore}`);
 	console.log(`solve run time = ${solveEnd-solveStart}`);
 	// console.log(`equals run time = ${equalTime}`);
 	// console.log(`open operations run time = ${openOperationsTime}`);
