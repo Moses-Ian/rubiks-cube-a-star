@@ -111,12 +111,17 @@ class IdealizedRubik {
 	}
 	
 	// for each turn that can be made, create a new idealized rubik and add it to the list of neighbors
-	addNeighbors() {
+	addNeighbors(depth) {
+		// add the neighbors
 		this.neighbors = [];
 		Object.keys(turns).forEach(key => 
 			this.neighbors.push(this.fromTurn(turns[key]))
 		);
 		
+		// go deeper
+		depth--;
+		if (depth > 0)
+			this.neighbors.forEach(neighbor => neighbor.addNeighbors(depth));
 	}
 	
 	// does not turn THIS cube
@@ -179,7 +184,6 @@ class IdealizedRubik {
 				for(let k=0; k<cubeSize; k++) 
 					Cubie[fun].call(this.cube[i][j][k], index);
 	}
-
 	
 	copy() {
 		let rubik = new IdealizedRubik();

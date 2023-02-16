@@ -117,6 +117,11 @@ class PriorityQueue {
 		return this._hashTable.size;
 	}
 	
+	find(item) {
+		// returns an item in the queue where a == b
+		
+	}
+
 	// returns an array of items that are close to being the smallest
 	// it's the root list, so it won't necessarily be the next N smallest
 	getClose() {

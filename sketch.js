@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/OrbitControls.js';
 import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
 import { Turn } from './turn.js';
-import { solve, getScore } from './solve.js';
+import { solve, getScore, checkLocalMax } from './solve.js';
 import { IdealizedRubik } from './IdealizedRubik.js';
 import { Score } from './score.js';
 
@@ -57,8 +57,14 @@ function animate() {
 	rubik.updateFrame();
 	
 	// get the score
-	let score = getScore(new IdealizedRubik(rubik));
+	let ideal = new IdealizedRubik(rubik)
+	let score = getScore(ideal);
+	ideal.score = score.score;
+	ideal.addNeighbors();
+	ideal.neighbors.forEach(neighbor => neighbor.score = getScore(neighbor).score);
+	score = checkLocalMax(ideal, score);
 	if (score.score != oldScore) {
+		// console.log(ideal);
 		// console.log(score);
 		keys.forEach(key => 
 			document.getElementById(key).innerHTML = `${key} = ${score[key]}`

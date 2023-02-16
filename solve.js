@@ -6,22 +6,27 @@ import { Cubie } from './cubie.js';
 import { Score } from './score.js';
 
 // optional parameters
-const BREAK_POINT = 66;
+const BREAK_POINT = 3000;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
-const turnScore = 6;
+const turnScore = 5.5;	// average h difference is ~13.4. I wonder if that's going to be relevant?
 const locationScore = 1;
 const closeScore = 0.8;
 const nearScore = 0.15;
 const correctNeighborScore = .6;
 const loneCubiePenalty = -6;
+const loneCubieCloseScore = 0;//1;
 const lonePairPenalty = 0;	// remember that this gets doubled
-const scoreWeight = 1;	// bigger is less impactful
+const localMaximumPenalty = 10;
+const scoreWeight = 1;	// bigger -> broader
 const maxMoves = 50;
 
 // important values
 const endRubik = IdealizedRubik.solution(cubeSize);
 let perfectScore = getScore(endRubik).score;
+let openSet;
+let closedSet;
+let startScore;
 
 function solve(r) {
 	console.log('/----- solve -----/');
@@ -43,9 +48,9 @@ function solve(r) {
 	let access = 0;
 	
 	// create the sets
-	let openSet = new PriorityQueue(rubik => rubik.f);	// 'proper' heuristic
+	openSet = new PriorityQueue(rubik => rubik.f);	// 'proper' heuristic
 	// let openSet = new PriorityQueue(rubik => -rubik.score); // intuition
-	let closedSet = new ClosedSet();
+	closedSet = new ClosedSet();
 	if (ATTACH_TO_WINDOW) {
 		window.openSet = openSet;
 		window.closedSet = closedSet;
@@ -56,9 +61,11 @@ function solve(r) {
 	openSet.push(startRubik);
 	
 	// set a starting score -> you get no points for your starting position
-	const startScore = getScore(startRubik).score;
-	startRubik.score = 0;
+	startScore = getScore(startRubik).score;
 	perfectScore = getScore(endRubik).score - startScore;
+	startRubik.score = 0;
+	startRubik.g = 0;
+	startRubik.h = perfectScore;
 	console.log(`perfect score = ${perfectScore}`);
 	
 	// while open set is not empty
@@ -67,13 +74,11 @@ function solve(r) {
 		
 		//find the lowest f aka highest score
 		let current = openSet.pop();
-		console.log(current);
-		// let nearBy = openSet.getClose();
-		// console.log(nearBy);
+		// console.log(current);
 		
 		// if (closedSet.size % 10 == 0) {
-			console.log(`score = ${current.score} g = ${current.g} h = ${current.h} f = ${current.f}`);
-			console.log(openSet.size(), closedSet.size);
+			// console.log(`score = ${current.score} g = ${current.g} h = ${current.h} f = ${current.f}`);
+			// console.log(openSet.size(), closedSet.size);
 		// }
 		
 		if (current.g > gWatermark)
@@ -95,61 +100,29 @@ function solve(r) {
 		closedSet.add(current);
 		
 		// create neighbors
-		current.addNeighbors();
-		current.neighbors.forEach(neighbor => {
-			// set score
-			neighbor.score = getScore(neighbor).score - startScore;
-			// console.log(neighbor);
-
-			// if it's already in the closed set, leave
-			let result = closedSet.has(neighbor);
-			// console.log(result);
-			if (result)
-				return;
-			
-			// set g score
-			let g = current.g + turnScore;
-			
-			// get out if it's too many moves
-			if (g > maxMoves)
-				return;
-			
-			// check every element in the queue's underlying heap and compare it
-			let addIt = true;
-			let other = null;
-			openSet.forEach(rubik => {
-				result = rubik.equals(neighbor);
-				if (result) {
-					if (g >= rubik.g) 
-						addIt = false;
-					else
-						other = rubik;
-				}
-			});
-			
-			// if we don't add it, get out of here
-			if (!addIt)
-				return;
-			
-			// we got here faster than the other did -> remove the other
-			if (other != null)
-				openSet.remove(other);
-
-			// set g
-			neighbor.g = g;
-			
-			// set h
-			neighbor.h = perfectScore - neighbor.score;
-
-			// set f
-			neighbor.f = neighbor.g + neighbor.h * scoreWeight;
-			
-			// set cameFrom
-			neighbor.previousRubik = current;
-			
-			// add it to the open set
-			openSet.push(neighbor);
-		});
+		// look one space ahead
+		current.addNeighbors(1);
+		current.neighbors.forEach(neighbor => setNeighborScore(neighbor, current));
+		
+		// look two spaces ahead
+		// current.addNeighbors(2);
+		// current.neighbors.forEach(neighbor => {
+			// setNeighborScore(neighbor, current);
+			// neighbor.neighbors.forEach(n => setNeighborScore(n, neighbor));
+		// });
+		
+		// look three spaces ahead
+		// current.addNeighbors(3);
+		// current.neighbors.forEach(neighbor => {
+			// setNeighborScore(neighbor, current);
+			// neighbor.neighbors.forEach(n => {
+				// setNeighborScore(neighbor, current);
+				// neighbor.neighbors.forEach(n => setNeighborScore(n, neighbor));
+			// });
+		// });
+		
+		// check whether I'm a local maximum
+		checkLocalMax(current);
 		
 		// escape if it's taking too long
 		if (closedSet.size == BREAK_POINT)
@@ -174,7 +147,64 @@ function solve(r) {
 	document.getElementById("solving").style.display = "none";
 	
 	// attempt to force garbage collection
+	openSet = null;
+	closedSet = null;
 	let hello = "hello";
+}
+
+function setNeighborScore(neighbor, current) {
+	// set score
+	neighbor.score = getScore(neighbor).score;
+	// console.log(neighbor);
+
+	// if it's already in the closed set, leave
+	let result = closedSet.has(neighbor);
+	// console.log(result);
+	if (result)
+		return;
+	
+	// set g score
+	let g = current.g + turnScore;
+	
+	// get out if it's too many moves
+	if (g > maxMoves)
+		return;
+	
+	// check every element in the queue's underlying heap and compare it
+	let addIt = true;
+	let other = null;
+	openSet.forEach(rubik => {
+		result = rubik.equals(neighbor);
+		if (result) {
+			if (g >= rubik.g) 
+				addIt = false;
+			else
+				other = rubik;
+		}
+	});
+	
+	// if we don't add it, get out of here
+	if (!addIt)
+		return;
+	
+	// we got here faster than the other did -> remove the other
+	if (other != null)
+		openSet.remove(other);
+
+	// set g
+	neighbor.g = g;
+	
+	// set h
+	neighbor.h = perfectScore - (neighbor.score - startScore);
+
+	// set f
+	neighbor.f = neighbor.g + neighbor.h * scoreWeight;
+	
+	// set cameFrom
+	neighbor.previousRubik = current;
+	
+	// add it to the open set
+	openSet.push(neighbor);
 }
 
 function getScore(current) {
@@ -278,6 +308,13 @@ function getCubieScore(current, i, j, k) {
 		score.loneCubies++;
 	}
 	
+	// add points if the lone cubie is one move away from its correct neighbor
+	if (correctNeighbors == 0) {
+		let oneMoveAway = distances.filter(d => d == 3);
+		score.score += loneCubieCloseScore * oneMoveAway.length;
+		score.loneCubieClose += oneMoveAway.length;
+	}
+	
 	// check for lone pairs
 	// if i have only one neighbor, and that neighbor has only one neighbor
 	if (correctNeighbors == 1) {
@@ -311,6 +348,34 @@ function getCubieScore(current, i, j, k) {
 	return score;
 }
 
+function checkLocalMax(current, score=null) {
+	// localMaximumPenalty -> if all of my neighbors have a worse score than me, penalize me and them
+	
+	// if the neighbor array is empty, get out of here
+	if (!current.neighbors.length)
+		return;
+	
+	let localMax = true;
+	current.neighbors.forEach(neighbor => {
+		if (neighbor.score > current.score)
+			localMax = false;
+	});
+
+	if (localMax) {
+		if (score != null) {
+			score.localMax = true;
+			score.score += localMaximumPenalty;
+		}
+		current.localMax = true;
+		// it's too late to punish me
+		// punish the neighbors instead
+		current.neighbors.forEach(neighbor => neighbor.f += localMaximumPenalty);
+	}
+	
+	// can return null
+	return score;
+}
+
 function showThePath(r, current) {
 	// create the move set
 	let path = [];
@@ -331,4 +396,4 @@ function showThePath(r, current) {
 
 
 
-export {solve, getScore};
+export {solve, getScore, checkLocalMax};
