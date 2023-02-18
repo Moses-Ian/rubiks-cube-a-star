@@ -27,6 +27,7 @@ let perfectScore = getScore(endRubik).score;
 let openSet;
 let closedSet;
 let startScore;
+let bestCube;
 
 function solve(r) {
 	console.log('/----- solve -----/');
@@ -63,9 +64,11 @@ function solve(r) {
 	// set a starting score -> you get no points for your starting position
 	startScore = getScore(startRubik).score;
 	perfectScore = getScore(endRubik).score - startScore;
-	startRubik.score = 0;
+	startRubik.score = startScore;
 	startRubik.g = 0;
 	startRubik.h = perfectScore;
+	startRubik.f = startRubik.g + startRubik.h * scoreWeight;
+	bestCube = startRubik;
 	console.log(`perfect score = ${perfectScore}`);
 	
 	// while open set is not empty
@@ -84,6 +87,10 @@ function solve(r) {
 		if (current.g > gWatermark)
 			gWatermark = current.g;
 		
+		// compare to the best so far
+		if (current.score > bestCube.score)
+			bestCube = current;
+		
 		// check whether we're done
 		let result = current.equals(endRubik);
 		if (result) {
@@ -101,7 +108,8 @@ function solve(r) {
 		
 		// create neighbors
 		// look one space ahead
-		current.addNeighbors(1);
+		if (current.neighbors.length == 0)
+			current.addNeighbors(1);
 		current.neighbors.forEach(neighbor => setNeighborScore(neighbor, current));
 		
 		// look two spaces ahead
@@ -122,11 +130,29 @@ function solve(r) {
 		// });
 		
 		// check whether I'm a local maximum
-		checkLocalMax(current);
+		let { localMax } = checkLocalMax(current);
+		// if i am, just add neighbors 2 levels deep
+		if (localMax && !current.equals(startRubik)) {
+			console.log('local max true');
+			// go ahead and just add all of the neighbors nearby
+			// current.neighbors.forEach(neighbor => neighbor.addNeighbors(2));
+			// current.neighbors.forEach(neighbor => {
+				// setNeighborScore(neighbor, current);
+				// neighbor.neighbors.forEach(n => {
+					// setNeighborScore(neighbor, current);
+					// neighbor.neighbors.forEach(n => setNeighborScore(n, neighbor));
+				// });
+			// });
+			
+			// instead of that, remove all those neighbors so we don't get stuck in a 'hilly' area
+			current.neighbors.forEach(neighbor => openSet.remove(neighbor));
+		}
 		
 		// escape if it's taking too long
-		if (closedSet.size == BREAK_POINT)
+		if (closedSet.size == BREAK_POINT) {
+			showThePath(r, bestCube);
 			break;
+		}
 	}
 	
 	// print performance results
@@ -348,7 +374,8 @@ function getCubieScore(current, i, j, k) {
 	return score;
 }
 
-function checkLocalMax(current, score=null) {
+function checkLocalMax(current, score={localMax: false, score: 0}) {
+	// debugger;
 	// localMaximumPenalty -> if all of my neighbors have a worse score than me, penalize me and them
 	
 	// if the neighbor array is empty, get out of here
@@ -362,10 +389,8 @@ function checkLocalMax(current, score=null) {
 	});
 
 	if (localMax) {
-		if (score != null) {
-			score.localMax = true;
-			score.score += localMaximumPenalty;
-		}
+		score.localMax = true;
+		score.score += localMaximumPenalty;
 		current.localMax = true;
 		// it's too late to punish me
 		// punish the neighbors instead

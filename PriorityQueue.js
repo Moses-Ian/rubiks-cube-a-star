@@ -69,6 +69,12 @@ class PriorityQueue {
 	
 	remove(item) {
 		let node = this._hashTable.get(item);
+		
+		// if the item isn't in the hash table, just get out of here
+		if (node == null)
+			return;
+			
+		
 		node.operations.push('remove');
 		
 		// add the children to the root list one by one
