@@ -14,8 +14,11 @@ const locationScore = 1;
 const closeScore = 0.8;
 const nearScore = 0.15;
 const correctNeighborScore = .6;
-const loneCubiePenalty = -6;
-const loneCubieCloseScore = 0;//1;
+const orientationScore = 1;
+const relativeOrientationScore = 1;
+const wrongRelativeOrientationPenalty = 1;
+const loneCubiePenalty = -1;
+const loneCubieCloseScore = 1;
 const lonePairPenalty = 0;	// remember that this gets doubled
 const localMaximumPenalty = 10;
 const scoreWeight = 1;	// bigger -> broader
@@ -145,7 +148,7 @@ function solve(r) {
 			// });
 			
 			// instead of that, remove all those neighbors so we don't get stuck in a 'hilly' area
-			current.neighbors.forEach(neighbor => openSet.remove(neighbor));
+			// current.neighbors.forEach(neighbor => openSet.remove(neighbor));
 		}
 		
 		// escape if it's taking too long
@@ -299,12 +302,11 @@ function getCubieScore(current, i, j, k) {
 		}
 	}
 		
-		
-		
-
 	// if spots are in the right location and orientation
-	// if (A && B && C && cubie.normal.x && !cubie.index.y && !cubie.index.z)
-		// score++;
+	if (A && B && C && cubie.normal.x && !cubie.normal.y && !cubie.normal.z) {
+		score.score += orientationScore;
+		score.correctOrientation++;
+	}
 	
 	// am i next to the correct neighbor?
 	
@@ -319,9 +321,6 @@ function getCubieScore(current, i, j, k) {
 	);
 	
 	let correctDistances = distances.filter(d => d == 1);
-	// if (correctDistances == undefined) {
-		// debugger;
-	// }
 	let correctNeighbors = correctDistances.length;
 	score.cubiesWithCorrectNeighbors += correctNeighbors;
 	let neighborScore = correctNeighbors * correctNeighborScore;
@@ -370,6 +369,20 @@ function getCubieScore(current, i, j, k) {
 		}
 	}
 	
+	// see if i'm in the same orientation as my neighbor
+	neighbors.forEach(neighbor => {
+		if (
+			Math.abs(cubie.index.x - neighbor.index.x) +
+				Math.abs(cubie.index.y - neighbor.index.y) +
+				Math.abs(cubie.index.z - neighbor.index.z) == 1 &&
+			cubie.normal.x == neighbor.normal.x &&
+			cubie.normal.y == neighbor.normal.y &&
+			cubie.normal.z == neighbor.normal.z
+		) {
+			score.score += relativeOrientationScore;
+			score.relativeOrientation++;
+		}
+	});
 	
 	return score;
 }

@@ -5,6 +5,8 @@ class Score {
 		this.cubiesWithCorrectNeighbors = 0;
 		this.cubieClose = 0;
 		this.cubieNear = 0;
+		this.correctOrientation = 0;
+		this.relativeOrientation = 0;
 		this.loneCubies = 0;
 		this.loneCubieClose = 0;
 		this.lonePairs = 0;
@@ -17,6 +19,8 @@ class Score {
 		this.cubiesWithCorrectNeighbors += score.cubiesWithCorrectNeighbors;
 		this.cubieClose += score.cubieClose;
 		this.cubieNear += score.cubieNear;
+		this.correctOrientation += score.correctOrientation;
+		this.relativeOrientation += score.relativeOrientation;
 		this.loneCubies += score.loneCubies;
 		this.loneCubieClose += score.loneCubieClose;
 		this.lonePairs += score.lonePairs;
