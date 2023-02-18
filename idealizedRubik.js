@@ -22,6 +22,14 @@ turns['E'] = new Turn('-x',  1);
 turns['P'] = new Turn('-z', -1);
 turns['U'] = new Turn('-z',  1);
 
+const turnMap = new Map();
+turnMap.set('x', 'turnX');
+turnMap.set('y', 'turnY');
+turnMap.set('z', 'turnZ');
+turnMap.set('-x', 'turnNegX');
+turnMap.set('-y', 'turnNegY');
+turnMap.set('-z', 'turnNegZ');
+
 class IdealizedRubik {
 	constructor(rubik) {
 		// each cube has a value function
@@ -130,54 +138,11 @@ class IdealizedRubik {
 		let rubik = this.copy();
 		rubik.previousTurn = turn;
 		
-		// do more things
-		switch (turn.direction) {
-			case 'x':
-				rubik.turnX(turn.index);
-				break;
-			case 'y':
-				rubik.turnY(turn.index);
-				break;
-			case 'z':
-				rubik.turnZ(turn.index);
-				break;
-			case '-x':
-				rubik.turnNegX(turn.index);
-				break;
-			case '-y':
-				rubik.turnNegY(turn.index);
-				break;
-			case '-z':
-				rubik.turnNegZ(turn.index);
-				break;
-		}
+		rubik.forEach(turnMap.get(turn.direction), turn.index);
+		
 		return rubik;
 	}
 	
-	turnX(index) {
-		this.forEach('turnX', index);
-	}
-	
-	turnY(index) {
-		this.forEach('turnY', index);
-	}
-	
-	turnZ(index) {
-		this.forEach('turnZ', index);
-	}
-
-	turnNegX(index) {
-		this.forEach('turnNegX', index);
-	}
-	
-	turnNegY(index) {
-		this.forEach('turnNegY', index);
-	}
-	
-	turnNegZ(index) {
-		this.forEach('turnNegZ', index);
-	}
-
 	forEach(fun, index) {
 		for(let i=0; i<cubeSize; i++) 
 			for(let j=0; j<cubeSize; j++) 

@@ -6,7 +6,7 @@ import { Cubie } from './cubie.js';
 import { Score } from './score.js';
 
 // optional parameters
-const BREAK_POINT = 3000;
+const BREAK_POINT = 10000;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
 const turnScore = 5.5;	// average h difference is ~13.4. I wonder if that's going to be relevant?
