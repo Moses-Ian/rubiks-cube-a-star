@@ -171,25 +171,25 @@ function setNeighborScore(neighbor, current) {
 		return;
 	
 	// check every element in the queue's underlying heap and compare it
-	let addIt = true;
-	let other = null;
-	openSet.forEach(rubik => {
-		result = rubik.equals(neighbor);
-		if (result) {
-			if (g >= rubik.g) 
-				addIt = false;
-			else
-				other = rubik;
-		}
-	});
+	// let addIt = true;
+	// let other = null;
+	// openSet.forEach(rubik => {
+		// result = rubik.equals(neighbor);
+		// if (result) {
+			// if (g >= rubik.g) 
+				// addIt = false;
+			// else
+				// other = rubik;
+		// }
+	// });
 	
 	// if we don't add it, get out of here
-	if (!addIt)
-		return;
+	// if (!addIt)
+		// return;
 	
 	// we got here faster than the other did -> remove the other
-	if (other != null)
-		openSet.remove(other);
+	// if (other != null)
+		// openSet.remove(other);
 
 	// set g
 	neighbor.g = g;
