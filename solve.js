@@ -415,15 +415,8 @@ function checkLocalMax(current, score={localMax: false, score: 0}) {
 }
 
 function showThePath(r, current) {
-	// create the move set
-	let path = [];
-	let temp = current;
-	do {
-		path.push(temp);
-		temp = temp.previousRubik;
-	}while(temp);
-	path.reverse();
-
+	let path = current.getPath();
+	
 	console.log('/----- Best Path -----/');
 	path.forEach(cube => console.log(`score = ${cube.score} f = ${cube.f}`));
 	

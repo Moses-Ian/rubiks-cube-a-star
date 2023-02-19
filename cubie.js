@@ -69,7 +69,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_z(index) {
+	static turn_c(index) {
 		if (this.index.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -84,7 +84,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_a(index) {
+	static turn_X(index) {
 		if (this.index.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -100,7 +100,7 @@ class Cubie {
 			
 	}
 	
-	static turn_b(index) {
+	static turn_Y(index) {
 		if (this.index.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -115,7 +115,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_c(index) {
+	static turn_C(index) {
 		if (this.index.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -130,7 +130,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_X() {
+	static turn_a() {
 		if (this.index.x == 1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -145,7 +145,7 @@ class Cubie {
 		}	
 	}
 	
-	static turn_Y(index) {
+	static turn_b(index) {
 		if (this.index.y == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -160,7 +160,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_Z(index) {
+	static turn_z(index) {
 		if (this.index.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -206,7 +206,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_C(index) {
+	static turn_Z(index) {
 		if (this.index.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -HALF_PI);

@@ -12,19 +12,19 @@ const MILLIS_PER_FRAME = 25;
 const shuffleMoves = 20;
 
 // key dictionary
-const turns = new Object();
-turns['a'] = new Turn('x');
-turns['e'] = new Turn('a');
-turns[','] = new Turn('y');
-turns['o'] = new Turn('b');
-turns['p'] = new Turn('c');
-turns['u'] = new Turn('z');
-turns['A'] = new Turn('X');
-turns['E'] = new Turn('A');
-turns['<'] = new Turn('Y');
-turns['O'] = new Turn('B');
-turns['P'] = new Turn('C');
-turns['U'] = new Turn('Z');
+const turns = new Object();	// for example:
+turns['a'] = new Turn('x'); // L
+turns['e'] = new Turn('a'); // R
+turns[','] = new Turn('y'); // U
+turns['o'] = new Turn('b'); // D
+turns['p'] = new Turn('c'); // B
+turns['u'] = new Turn('z'); // F
+turns['A'] = new Turn('X'); // L'
+turns['E'] = new Turn('A'); // R'
+turns['<'] = new Turn('Y'); // U'
+turns['O'] = new Turn('B'); // D'
+turns['P'] = new Turn('C'); // B'
+turns['U'] = new Turn('Z'); // F'
 
 class Rubik {
 	constructor() {

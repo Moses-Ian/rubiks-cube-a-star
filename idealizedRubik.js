@@ -10,25 +10,17 @@ const cubeSize = 3;
 // key dictionary
 const turns = new Object();	// for example:
 turns['a'] = new Turn('x'); // L
-turns['e'] = new Turn('X'); // R
+turns['e'] = new Turn('a'); // R
 turns[','] = new Turn('y'); // U
-turns['o'] = new Turn('Y'); // D
-turns['p'] = new Turn('z'); // B
-turns['u'] = new Turn('Z'); // F
-turns['A'] = new Turn('a'); // L'
+turns['o'] = new Turn('b'); // D
+turns['p'] = new Turn('c'); // B
+turns['u'] = new Turn('z'); // F
+turns['A'] = new Turn('X'); // L'
 turns['E'] = new Turn('A'); // R'
-turns['<'] = new Turn('b'); // U'
+turns['<'] = new Turn('Y'); // U'
 turns['O'] = new Turn('B'); // D'
-turns['P'] = new Turn('c'); // B'
-turns['U'] = new Turn('C'); // F'
-
-const turnMap = new Map();
-turnMap.set('x', 'turnX');
-turnMap.set('y', 'turnY');
-turnMap.set('z', 'turnZ');
-turnMap.set('-x', 'turnNegX');
-turnMap.set('-y', 'turnNegY');
-turnMap.set('-z', 'turnNegZ');
+turns['P'] = new Turn('C'); // B'
+turns['U'] = new Turn('Z'); // F'
 
 class IdealizedRubik {
 	constructor(rubik) {
@@ -143,6 +135,15 @@ class IdealizedRubik {
 		return rubik;
 	}
 	
+	// does not turn THIS cube
+	fromTurnList(turnList) {
+		let rubik = this.copy();
+		
+		
+		
+		return rubik;
+	}
+	
 	forEach(fun, index) {
 		for(let i=0; i<cubeSize; i++) 
 			for(let j=0; j<cubeSize; j++) 
@@ -179,6 +180,19 @@ class IdealizedRubik {
 		rubik.offset = offset;
 		
 		return rubik;
+	}
+	
+	getPath() {
+		// create the move set
+		let path = [];
+		let temp = this;
+		do {
+			path.push(temp);
+			temp = temp.previousRubik;
+		}while(temp);
+		path.reverse();
+		
+		return path;
 	}
 	
 }

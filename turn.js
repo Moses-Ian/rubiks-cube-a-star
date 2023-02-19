@@ -102,6 +102,7 @@ class TurnList {
 class Algorithm {
 	constructor(algo) {
 		// a string such as RLrl
+		// 'back' needs to be K or k (for negative)
 		this.algo = algo;
 	}
 	
