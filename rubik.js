@@ -14,17 +14,17 @@ const shuffleMoves = 20;
 // key dictionary
 const turns = new Object();
 turns['a'] = new Turn('x');
-turns['e'] = new Turn('X');
+turns['e'] = new Turn('a');
 turns[','] = new Turn('y');
-turns['o'] = new Turn('Y');
-turns['p'] = new Turn('z');
-turns['u'] = new Turn('Z');
-turns['A'] = new Turn('a');
+turns['o'] = new Turn('b');
+turns['p'] = new Turn('c');
+turns['u'] = new Turn('z');
+turns['A'] = new Turn('X');
 turns['E'] = new Turn('A');
-turns['<'] = new Turn('b');
+turns['<'] = new Turn('Y');
 turns['O'] = new Turn('B');
-turns['P'] = new Turn('c');
-turns['U'] = new Turn('C');
+turns['P'] = new Turn('C');
+turns['U'] = new Turn('Z');
 
 class Rubik {
 	constructor() {

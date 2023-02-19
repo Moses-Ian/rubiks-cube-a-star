@@ -156,7 +156,7 @@ class Box {
 		}
 	}
 	
-	static turn_z() {
+	static turn_c() {
 		if (this.oldIndex.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -173,7 +173,7 @@ class Box {
 		}
 	}
 	
-	static turn_a() {
+	static turn_X() {
 		if (this.oldIndex.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -turnSpeed);
@@ -191,7 +191,7 @@ class Box {
 			
 	}
 	
-	static turn_b() {
+	static turn_Y() {
 		if (this.oldIndex.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -turnSpeed);
@@ -208,7 +208,7 @@ class Box {
 		}
 	}
 	
-	static turn_c() {
+	static turn_C() {
 		if (this.oldIndex.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -turnSpeed);
@@ -225,7 +225,7 @@ class Box {
 		}
 	}
 	
-	static turn_X() {
+	static turn_a() {
 		if (this.oldIndex.x == 1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -243,7 +243,7 @@ class Box {
 			
 	}
 	
-	static turn_Y() {
+	static turn_b() {
 		if (this.oldIndex.y == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -260,7 +260,7 @@ class Box {
 		}
 	}
 	
-	static turn_Z() {
+	static turn_z() {
 		if (this.oldIndex.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, turnSpeed);
@@ -312,7 +312,7 @@ class Box {
 		}
 	}
 	
-	static turn_C() {
+	static turn_Z() {
 		if (this.oldIndex.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -turnSpeed);

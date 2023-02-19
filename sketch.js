@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
 import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
-import { Turn } from './turn.js';
+import { Turn, algorithm1, Algorithm } from './turn.js';
 import { solve, getScore, checkLocalMax } from './solve.js';
 import { IdealizedRubik } from './IdealizedRubik.js';
 import { Score } from './score.js';
@@ -39,15 +39,24 @@ orbit.update();
 let rubik = new Rubik();
 rubik.addToScene(scene);
 
+
 // gui
 const gui = new dat.GUI();
 const options = { 
 	Shuffle: () => rubik.shuffle(),
-	Solve: () => solve(rubik)
+	Solve: () => solve(rubik),
+	Algorithm1: () => {
+		// my test code
+		let algo = 'RLdrlFRLDDrlKRLDDrlfRLDrlk';
+		let algorithm = new Algorithm(algo);
+		let tl = algorithm.toTurnList('x', 'y');
+		tl.start(rubik);
+	}
 };
 
 gui.add(options,'Shuffle');
 gui.add(options,'Solve');
+gui.add(options, 'Algorithm1');
 
 // define the animation loop
 function animate() {
