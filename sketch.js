@@ -60,9 +60,9 @@ function animate() {
 	let ideal = new IdealizedRubik(rubik)
 	let score = getScore(ideal);
 	ideal.score = score.score;
-	ideal.addNeighbors();
+	// ideal.addNeighbors();
 	ideal.neighbors.forEach(neighbor => neighbor.score = getScore(neighbor).score);
-	score = checkLocalMax(ideal, score);
+	// score = checkLocalMax(ideal, score);
 	if (score.score != oldScore) {
 		// console.log(ideal);
 		// console.log(score);

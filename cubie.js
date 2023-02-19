@@ -39,8 +39,8 @@ class Cubie {
 		return true;
 	}
 
-	static turnX(index) {
-		if (this.index.x == index) {
+	static turn_x() {
+		if (this.index.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
@@ -54,8 +54,8 @@ class Cubie {
 		}	
 	}
 	
-	static turnY(index) {
-		if (this.index.y == index) {
+	static turn_y(index) {
+		if (this.index.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
@@ -69,8 +69,8 @@ class Cubie {
 		}
 	}
 	
-	static turnZ(index) {
-		if (this.index.z == index) {
+	static turn_z(index) {
+		if (this.index.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, HALF_PI);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
@@ -84,8 +84,8 @@ class Cubie {
 		}
 	}
 	
-	static turnNegX(index) {
-		if (this.index.x == index) {
+	static turn_a(index) {
+		if (this.index.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
@@ -100,8 +100,8 @@ class Cubie {
 			
 	}
 	
-	static turnNegY(index) {
-		if (this.index.y == index) {
+	static turn_b(index) {
+		if (this.index.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
@@ -115,8 +115,99 @@ class Cubie {
 		}
 	}
 	
-	static turnNegZ(index) {
-		if (this.index.z == index) {
+	static turn_c(index) {
+		if (this.index.z == -1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.y)
+				.rotateAround(ZERO2D, -HALF_PI);
+			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			temp = this.normal.x;
+			this.normal.x = this.normal.y;
+			this.normal.y = -temp;
+			this.normal.z = this.normal.z;
+			
+			Cubie.update.call(this);
+		}
+	}
+	
+	static turn_X() {
+		if (this.index.x == 1) {
+			let temp = new THREE.Vector2(this.index.y, this.index.z)
+				.rotateAround(ZERO2D, HALF_PI);
+			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			temp = this.normal.y;
+			this.normal.x = this.normal.x;
+			this.normal.y = -this.normal.z;
+			this.normal.z = temp;
+			
+			Cubie.update.call(this);
+		}	
+	}
+	
+	static turn_Y(index) {
+		if (this.index.y == -1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.z)
+				.rotateAround(ZERO2D, HALF_PI);
+			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			temp = this.normal.x;
+			this.normal.x = -this.normal.z;
+			this.normal.y = this.normal.y;
+			this.normal.z = temp;
+			
+			Cubie.update.call(this);
+		}
+	}
+	
+	static turn_Z(index) {
+		if (this.index.z == 1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.y)
+				.rotateAround(ZERO2D, HALF_PI);
+			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			temp = this.normal.x;
+			this.normal.x = -this.normal.y;
+			this.normal.y = temp;
+			this.normal.z = this.normal.z;
+			
+			Cubie.update.call(this);
+		}
+	}
+	
+	static turn_A(index) {
+		if (this.index.x == 1) {
+			let temp = new THREE.Vector2(this.index.y, this.index.z)
+				.rotateAround(ZERO2D, -HALF_PI);
+			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			temp = this.normal.y;
+			this.normal.x = this.normal.x;
+			this.normal.y = this.normal.z;
+			this.normal.z = -temp;
+			
+			Cubie.update.call(this);
+		}	
+			
+	}
+	
+	static turn_B(index) {
+		if (this.index.y == -1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.z)
+				.rotateAround(ZERO2D, -HALF_PI);
+			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			temp = this.normal.x;
+			this.normal.x = this.normal.z;
+			this.normal.y = this.normal.y;
+			this.normal.z = -temp;
+			
+			Cubie.update.call(this);
+		}
+	}
+	
+	static turn_C(index) {
+		if (this.index.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -HALF_PI);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);

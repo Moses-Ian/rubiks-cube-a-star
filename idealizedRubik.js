@@ -8,19 +8,19 @@ import { Turn } from './turn.js';
 const cubeSize = 3;
 
 // key dictionary
-const turns = new Object();
-turns[','] = new Turn('y',   1);
-turns['o'] = new Turn('y',  -1);
-turns['a'] = new Turn('x',  -1);
-turns['e'] = new Turn('x',   1);
-turns['p'] = new Turn('z',  -1);
-turns['u'] = new Turn('z',   1);
-turns['<'] = new Turn('-y',  1);
-turns['O'] = new Turn('-y', -1);
-turns['A'] = new Turn('-x', -1);
-turns['E'] = new Turn('-x',  1);
-turns['P'] = new Turn('-z', -1);
-turns['U'] = new Turn('-z',  1);
+const turns = new Object();	// for example:
+turns['a'] = new Turn('x'); // L
+turns['e'] = new Turn('X'); // R
+turns[','] = new Turn('y'); // U
+turns['o'] = new Turn('Y'); // D
+turns['p'] = new Turn('z'); // B
+turns['u'] = new Turn('Z'); // F
+turns['A'] = new Turn('a'); // L'
+turns['E'] = new Turn('A'); // R'
+turns['<'] = new Turn('b'); // U'
+turns['O'] = new Turn('B'); // D'
+turns['P'] = new Turn('c'); // B'
+turns['U'] = new Turn('C'); // F'
 
 const turnMap = new Map();
 turnMap.set('x', 'turnX');
@@ -138,7 +138,7 @@ class IdealizedRubik {
 		let rubik = this.copy();
 		rubik.previousTurn = turn;
 		
-		rubik.forEach(turnMap.get(turn.direction), turn.index);
+		rubik.forEach(`turn_${turn.direction}`);
 		
 		return rubik;
 	}

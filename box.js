@@ -121,8 +121,8 @@ class Box {
 		
 	}
 	
-	static turnX(index) {
-		if (this.oldIndex.x == index) {
+	static turn_x() {
+		if (this.oldIndex.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
@@ -139,8 +139,8 @@ class Box {
 			
 	}
 	
-	static turnY(index) {
-		if (this.oldIndex.y == index) {
+	static turn_y() {
+		if (this.oldIndex.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
@@ -156,8 +156,8 @@ class Box {
 		}
 	}
 	
-	static turnZ(index) {
-		if (this.oldIndex.z == index) {
+	static turn_z() {
+		if (this.oldIndex.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, turnSpeed);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
@@ -173,8 +173,8 @@ class Box {
 		}
 	}
 	
-	static turnNegX(index) {
-		if (this.oldIndex.x == index) {
+	static turn_a() {
+		if (this.oldIndex.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -turnSpeed);
 			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
@@ -191,8 +191,8 @@ class Box {
 			
 	}
 	
-	static turnNegY(index) {
-		if (this.oldIndex.y == index) {
+	static turn_b() {
+		if (this.oldIndex.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -turnSpeed);
 			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
@@ -208,8 +208,112 @@ class Box {
 		}
 	}
 	
-	static turnNegZ(index) {
-		if (this.oldIndex.z == index) {
+	static turn_c() {
+		if (this.oldIndex.z == -1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.y)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			this.updatePos();
+			
+			this.turn(Z3D, -turnSpeed);
+
+			this.normal.x = this.normal.x * Math.cos(-turnSpeed) - this.normal.y * Math.sin(-turnSpeed);
+			this.normal.y = this.normal.x * Math.sin(-turnSpeed) + this.normal.y * Math.cos(-turnSpeed);
+			this.normal.z = this.normal.z;
+			this.updateNormal();
+		}
+	}
+	
+	static turn_X() {
+		if (this.oldIndex.x == 1) {
+			let temp = new THREE.Vector2(this.index.y, this.index.z)
+				.rotateAround(ZERO2D, turnSpeed);
+			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			this.updatePos();
+			
+			this.turn(X3D);
+
+			this.normal.x = this.normal.x;
+			this.normal.y = this.normal.y * Math.cos(turnSpeed) - this.normal.z * Math.sin(turnSpeed);
+			this.normal.z = this.normal.y * Math.sin(turnSpeed) + this.normal.z * Math.cos(turnSpeed);
+			this.updateNormal();
+		}	
+			
+	}
+	
+	static turn_Y() {
+		if (this.oldIndex.y == -1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.z)
+				.rotateAround(ZERO2D, turnSpeed);
+			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			this.updatePos();
+			
+			this.turn(Y3D);
+
+			this.normal.x = this.normal.x * Math.cos(turnSpeed) - this.normal.z * Math.sin(turnSpeed);
+			this.normal.y = this.normal.y;
+			this.normal.z = this.normal.x * Math.sin(turnSpeed) + this.normal.z * Math.cos(turnSpeed);
+			this.updateNormal();
+		}
+	}
+	
+	static turn_Z() {
+		if (this.oldIndex.z == 1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.y)
+				.rotateAround(ZERO2D, turnSpeed);
+			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);
+			
+			this.updatePos();
+			
+			this.turn(Z3D);
+
+			this.normal.x = this.normal.x * Math.cos(turnSpeed) - this.normal.y * Math.sin(turnSpeed);
+			this.normal.y = this.normal.x * Math.sin(turnSpeed) + this.normal.y * Math.cos(turnSpeed);
+			this.normal.z = this.normal.z;
+			this.updateNormal();
+		}
+	}
+	
+	static turn_A() {
+		if (this.oldIndex.x == 1) {
+			let temp = new THREE.Vector2(this.index.y, this.index.z)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.index = new THREE.Vector3(this.index.x, temp.x, temp.y);
+			
+			this.updatePos();
+			
+			this.turn(X3D, -turnSpeed);
+
+			this.normal.x = this.normal.x;
+			this.normal.y = this.normal.y * Math.cos(-turnSpeed) - this.normal.z * Math.sin(-turnSpeed);
+			this.normal.z = this.normal.y * Math.sin(-turnSpeed) + this.normal.z * Math.cos(-turnSpeed);
+			this.updateNormal();
+		}	
+			
+	}
+	
+	static turn_B() {
+		if (this.oldIndex.y == -1) {
+			let temp = new THREE.Vector2(this.index.x, this.index.z)
+				.rotateAround(ZERO2D, -turnSpeed);
+			this.index = new THREE.Vector3(temp.x, this.index.y, temp.y);
+			
+			this.updatePos();
+			
+			this.turn(Y3D, -turnSpeed);
+
+			this.normal.x = this.normal.x * Math.cos(-turnSpeed) - this.normal.z * Math.sin(-turnSpeed);
+			this.normal.y = this.normal.y;
+			this.normal.z = this.normal.x * Math.sin(-turnSpeed) + this.normal.z * Math.cos(-turnSpeed);
+			this.updateNormal();
+		}
+	}
+	
+	static turn_C() {
+		if (this.oldIndex.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -turnSpeed);
 			this.index = new THREE.Vector3(temp.x, temp.y, this.index.z);

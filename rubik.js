@@ -13,18 +13,18 @@ const shuffleMoves = 20;
 
 // key dictionary
 const turns = new Object();
-turns[','] = new Turn('y',   1);
-turns['o'] = new Turn('y',  -1);
-turns['a'] = new Turn('x',  -1);
-turns['e'] = new Turn('x',   1);
-turns['p'] = new Turn('z',  -1);
-turns['u'] = new Turn('z',   1);
-turns['<'] = new Turn('-y',  1);
-turns['O'] = new Turn('-y', -1);
-turns['A'] = new Turn('-x', -1);
-turns['E'] = new Turn('-x',  1);
-turns['P'] = new Turn('-z', -1);
-turns['U'] = new Turn('-z',  1);
+turns['a'] = new Turn('x');
+turns['e'] = new Turn('X');
+turns[','] = new Turn('y');
+turns['o'] = new Turn('Y');
+turns['p'] = new Turn('z');
+turns['u'] = new Turn('Z');
+turns['A'] = new Turn('a');
+turns['E'] = new Turn('A');
+turns['<'] = new Turn('b');
+turns['O'] = new Turn('B');
+turns['P'] = new Turn('c');
+turns['U'] = new Turn('C');
 
 class Rubik {
 	constructor() {
@@ -65,63 +65,20 @@ class Rubik {
 		this.currentTurn = turnObject?.start() || this.currentTurn;
 	}
 	
-	turn(direction, index) {
-		switch (direction) {
-			case 'x':
-				this.turnX(index);
-				break;
-			case 'y':
-				this.turnY(index);
-				break;
-			case 'z':
-				this.turnZ(index);
-				break;
-			case '-x':
-				this.turnNegX(index);
-				break;
-			case '-y':
-				this.turnNegY(index);
-				break;
-			case '-z':
-				this.turnNegZ(index);
-				break;
-		}
+	turn(direction) {
+		this.forEach(`turn_${direction}`);
 	}
 	
-	turnX(index) {
-		this.forEach('turnX', index);
-	}
-	
-	turnY(index) {
-		this.forEach('turnY', index);
-	}
-	
-	turnZ(index) {
-		this.forEach('turnZ', index);
-	}
-
-	turnNegX(index) {
-		this.forEach('turnNegX', index);
-	}
-	
-	turnNegY(index) {
-		this.forEach('turnNegY', index);
-	}
-	
-	turnNegZ(index) {
-		this.forEach('turnNegZ', index);
-	}
-
 	// rounds things so that they don't drift out of position
 	updateCube() {
 		this.forEach('update');
 	}
 	
-	forEach(fun, index) {
+	forEach(fun) {
 		for(let i=0; i<cubeSize; i++) 
 			for(let j=0; j<cubeSize; j++) 
 				for(let k=0; k<cubeSize; k++) 
-					Box[fun].call(this.cube[i][j][k], index);
+					Box[fun].call(this.cube[i][j][k]);
 	}
 
 	shuffle() {
@@ -146,7 +103,7 @@ class Rubik {
 
 	updateFrame() {
 		if (this.currentTurn.framesLeft > 0) {
-			this.turn(this.currentTurn.direction, this.currentTurn.index);
+			this.turn(this.currentTurn.direction);
 			this.currentTurn.framesLeft--;
 			if (this.currentTurn.framesLeft == 0)
 				this.updateCube();
