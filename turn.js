@@ -60,6 +60,7 @@ class Turn {
 	}
 	
 	start() {
+		console.log(this.direction);
 		this.framesLeft = turnFrames;
 		return this;
 	}
@@ -67,6 +68,7 @@ class Turn {
 
 class TurnList {
 	constructor(algo=null) {
+		this.algo = algo;
 		if (algo == null) {
 			this.list = [];
 			return;
@@ -89,9 +91,11 @@ class TurnList {
 	}
 	
 	getPath() {
-		return this.list.map(turn => {
+		let list = this.list.map(turn => {
 			return { previousTurn: turn }
 		});
+		list[0].algorithm = this.algo;
+		return list;
 	}
 	
 	// static shuffle(numberOfTurns) {

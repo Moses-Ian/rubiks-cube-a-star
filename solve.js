@@ -113,11 +113,11 @@ function solve(r) {
 		
 		// create neighbors
 		// look one space ahead
-		if (current.neighbors.length == 0)
+		if (current.neighbors.length == 0) {
 			if (useAlgorithms)
 				current.addNeighborsWithAlgorithms();
-			else
-				current.addNeighbors(1);
+			current.addNeighbors(1);
+		}
 		current.neighbors.forEach(neighbor => setNeighborScore(neighbor, current));
 		
 		// look two spaces ahead
@@ -140,8 +140,8 @@ function solve(r) {
 		// check whether I'm a local maximum
 		let { localMax } = checkLocalMax(current);
 		// if i am, just add neighbors 2 levels deep
-		if (localMax && !current.equals(startRubik)) {
-			console.log('local max true');
+		// if (localMax && !current.equals(startRubik)) {
+			// console.log('local max true');
 			// go ahead and just add all of the neighbors nearby
 			// current.neighbors.forEach(neighbor => neighbor.addNeighbors(2));
 			// current.neighbors.forEach(neighbor => {
@@ -154,7 +154,7 @@ function solve(r) {
 			
 			// instead of that, remove all those neighbors so we don't get stuck in a 'hilly' area
 			// current.neighbors.forEach(neighbor => openSet.remove(neighbor));
-		}
+		// }
 		
 		// escape if it's taking too long
 		if (closedSet.size == BREAK_POINT) {
@@ -429,7 +429,12 @@ function checkLocalMax(current, score={localMax: false, score: 0}) {
 function showThePath(r, current) {
 	let path = current.getPath();
 	console.log('/----- Best Path -----/');
-	path.forEach(cube => console.log(`score = ${cube.score} f = ${cube.f}`));
+	path.forEach(cube => {
+		if (cube.algorithm)
+			console.log(cube.algorithm);
+		if (cube.score) 
+			console.log(`direction= ${cube.previousTurn?.direction} score= ${cube.score} f= ${cube.f}`);
+	});
 	
 	
 	// execute the moves

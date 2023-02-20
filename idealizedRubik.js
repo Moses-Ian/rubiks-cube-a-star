@@ -22,8 +22,19 @@ turns['O'] = new Turn('B'); // D'
 turns['P'] = new Turn('C'); // B'
 turns['U'] = new Turn('Z'); // F'
 
+// note: although algorithms have a nominative purpose, we're using them quite generally. The program will likely use a given algorithm for a totally unintended purpose
 const algorithms = [
-	new Algorithm('RLdrlFRLDDrlKRLDDrlfRLDrlk')
+	new Algorithm('RLdrlFRLDDrlKRLDDrlfRLDrlk'),	// Z Perm -> switch two adjacent edges
+	// 2-Look OLL algorithms
+	new Algorithm('AyaY'),			// Line -> orients edges
+	new Algorithm('rURUrUUR'), 	// Sune -> orients corners
+	new Algorithm('rUURuruR'),	// Anti-Sune -> orients corners (so that it doesn't have to Sune 5 times)
+	new Algorithm('AyaYAyaYAyaY'),	// H -> it's basically just Line 3 times so idk
+	new Algorithm('aauaauaa'),			// Pi
+	new Algorithm('ayAbaYAB'),			// L
+	new Algorithm('xyaYXyAY'),			// T
+	new Algorithm('ayyA'),					// U 1
+	new Algorithm('ayya'),					// U 2
 ]
 
 class IdealizedRubik {
