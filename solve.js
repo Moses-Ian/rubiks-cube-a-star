@@ -31,9 +31,11 @@ let openSet;
 let closedSet;
 let startScore;
 let bestCube;
+let useAlgorithms = false;
 
 function solve(r) {
 	console.log('/----- solve -----/');
+	console.log(`use algorithms= ${useAlgorithms}`);
 	//html nonsense
 	document.getElementById("done").style.display = "none";
 	document.getElementById("solving").style.display = "block";
@@ -112,7 +114,10 @@ function solve(r) {
 		// create neighbors
 		// look one space ahead
 		if (current.neighbors.length == 0)
-			current.addNeighbors(1);
+			if (useAlgorithms)
+				current.addNeighborsWithAlgorithms();
+			else
+				current.addNeighbors(1);
 		current.neighbors.forEach(neighbor => setNeighborScore(neighbor, current));
 		
 		// look two spaces ahead
@@ -162,6 +167,13 @@ function solve(r) {
 	if (!solveEnd) {
 		solveEnd = performance.now();
 		console.log(`Could not find solution`);
+
+		// check whether we're where we started
+		if (bestCube.equals(startRubik)) {
+			console.log("start using algorithms!");
+			useAlgorithms = true;
+		}
+			
 	}
 	console.log(openSet.size(), closedSet.size);
 	console.log(`most moves tried= ${gWatermark / turnScore}`);
@@ -416,7 +428,6 @@ function checkLocalMax(current, score={localMax: false, score: 0}) {
 
 function showThePath(r, current) {
 	let path = current.getPath();
-	
 	console.log('/----- Best Path -----/');
 	path.forEach(cube => console.log(`score = ${cube.score} f = ${cube.f}`));
 	
@@ -427,4 +438,4 @@ function showThePath(r, current) {
 
 
 
-export {solve, getScore, checkLocalMax};
+export {solve, getScore, checkLocalMax, showThePath};

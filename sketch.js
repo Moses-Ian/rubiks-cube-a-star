@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/OrbitControls.js';
 import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
 import { Turn, algorithm1, Algorithm } from './turn.js';
-import { solve, getScore, checkLocalMax } from './solve.js';
+import { solve, getScore, checkLocalMax, showThePath } from './solve.js';
 import { IdealizedRubik } from './IdealizedRubik.js';
 import { Score } from './score.js';
 
@@ -51,12 +51,20 @@ const options = {
 		let algorithm = new Algorithm(algo);
 		let tl = algorithm.toTurnList('x', 'y');
 		tl.start(rubik);
+	},
+	SolveAlgorithm1: () => {
+		let algo = 'RLdrlFRLDDrlKRLDDrlfRLDrlk'.split('').reverse().join('');
+		let current = new IdealizedRubik(rubik);
+		current.previousTurn = new Algorithm(algo).toTurnList('x', 'y');
+		debugger;
+		showThePath(rubik, current);
 	}
 };
 
 gui.add(options,'Shuffle');
 gui.add(options,'Solve');
 gui.add(options, 'Algorithm1');
+gui.add(options, 'SolveAlgorithm1');
 
 // define the animation loop
 function animate() {

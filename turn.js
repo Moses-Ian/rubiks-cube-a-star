@@ -88,6 +88,12 @@ class TurnList {
 		this.list.push(new Turn(direction));
 	}
 	
+	getPath() {
+		return this.list.map(turn => {
+			return { previousTurn: turn }
+		});
+	}
+	
 	// static shuffle(numberOfTurns) {
 		// let tl = new TurnList();
 		// tl.list = new Array(numberOfTurns);
@@ -109,24 +115,22 @@ class Algorithm {
 	// shit everything is flipped capitalization
 	toTurnList(R, U) {
 		let {r, u, L, l, D, d, F, f, K, k} = Algorithm.getFaces(R, U);
-		console.log(R, r, U, u, L, l, D, d, F, f, K, k);
 		
-		
-		console.log(this.algo);
+		// could probably be optimized with some regex bs
 		let algo = this.algo
-		algo = algo.replaceAll('R', R);
-		algo = algo.replaceAll('r', r);
-		algo = algo.replaceAll('L', L);
-		algo = algo.replaceAll('l', l);
-		algo = algo.replaceAll('U', U);
-		algo = algo.replaceAll('u', u);
-		algo = algo.replaceAll('D', D);
-		algo = algo.replaceAll('d', d);
-		algo = algo.replaceAll('F', F);
-		algo = algo.replaceAll('f', f);
-		algo = algo.replaceAll('K', K);
-		algo = algo.replaceAll('k', k);
-		console.log(algo);
+		algo = algo
+			.replaceAll('R', R)
+			.replaceAll('r', r)
+			.replaceAll('L', L)
+			.replaceAll('l', l)
+			.replaceAll('U', U)
+			.replaceAll('u', u)
+			.replaceAll('D', D)
+			.replaceAll('d', d)
+			.replaceAll('F', F)
+			.replaceAll('f', f)
+			.replaceAll('K', K)
+			.replaceAll('k', k);
 
 		let tl = new TurnList(algo);
 		
@@ -162,4 +166,4 @@ algorithm1.push('z');
 
 
 
-export { Turn, turnSpeed, turnFrames, algorithm1, Algorithm };
+export { Turn, TurnList, turnSpeed, turnFrames, algorithm1, Algorithm, frontFace };

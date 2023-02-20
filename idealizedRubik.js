@@ -2,7 +2,7 @@
 
 import {Rubik, len} from './rubik.js';
 import {Cubie} from './cubie.js';
-import { Turn } from './turn.js';
+import { Turn, TurnList, Algorithm, frontFace } from './turn.js';
 
 // optional parameters
 const cubeSize = 3;
@@ -21,6 +21,10 @@ turns['<'] = new Turn('Y'); // U'
 turns['O'] = new Turn('B'); // D'
 turns['P'] = new Turn('C'); // B'
 turns['U'] = new Turn('Z'); // F'
+
+const algorithms = [
+	new Algorithm('RLdrlFRLDDrlKRLDDrlfRLDrlk')
+]
 
 class IdealizedRubik {
 	constructor(rubik) {
@@ -124,6 +128,17 @@ class IdealizedRubik {
 			this.neighbors.forEach(neighbor => neighbor.addNeighbors(depth));
 	}
 	
+	addNeighborsWithAlgorithms() {
+		this.neighbors = [];
+		
+		Object.keys(frontFace).forEach(key => {
+			let [R, U] = key.split('');
+		
+			algorithms.forEach(key =>
+				this.neighbors.push(this.fromTurnList(key.toTurnList(R, U))));
+		});
+	}
+	
 	// does not turn THIS cube
 	// it creates a new cube that is a copy of this one, turns and returns THAT one
 	fromTurn(turn) {
@@ -138,8 +153,11 @@ class IdealizedRubik {
 	// does not turn THIS cube
 	fromTurnList(turnList) {
 		let rubik = this.copy();
+		rubik.previousTurn = turnList;
 		
-		
+		turnList.list.forEach(turn =>
+			rubik.forEach(`turn_${turn.direction}`)
+		);
 		
 		return rubik;
 	}
@@ -187,7 +205,10 @@ class IdealizedRubik {
 		let path = [];
 		let temp = this;
 		do {
-			path.push(temp);
+			if (temp.previousTurn instanceof TurnList) {
+				path = path.concat(temp.previousTurn.getPath().reverse());
+			} else
+				path.push(temp);
 			temp = temp.previousRubik;
 		}while(temp);
 		path.reverse();
