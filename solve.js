@@ -9,7 +9,7 @@ import { Score } from './score.js';
 const BREAK_POINT = 10000;
 const ATTACH_TO_WINDOW = false;
 const cubeSize = 3;
-const turnScore = 5.5;	// average h difference is ~13.4. I wonder if that's going to be relevant?
+const turnScore = 1;//5.5;	// average h difference is ~13.4. I wonder if that's going to be relevant?
 const locationScore = 1;
 const closeScore = 0.8;
 const nearScore = 0.15;
@@ -75,6 +75,7 @@ function solve(r) {
 	startRubik.f = startRubik.g + startRubik.h * scoreWeight;
 	bestCube = startRubik;
 	console.log(`perfect score = ${perfectScore}`);
+	console.log(`starting score = ${startScore}`);
 	
 	// while open set is not empty
 	while(openSet.size()) {
@@ -83,6 +84,9 @@ function solve(r) {
 		//find the lowest f aka highest score
 		let current = openSet.pop();
 		// console.log(current);
+		
+		// trying to see where in the process this got picked
+		current.closedSetSize = closedSet.size;
 		
 		// if (closedSet.size % 10 == 0) {
 			// console.log(`score = ${current.score} g = ${current.g} h = ${current.h} f = ${current.f}`);
@@ -178,6 +182,8 @@ function solve(r) {
 	console.log(openSet.size(), closedSet.size);
 	console.log(`most moves tried= ${gWatermark / turnScore}`);
 	console.log(`solve run time = ${solveEnd-solveStart}`);
+	console.log(`best cube found at ${bestCube.closedSetSize}`);
+	console.log(bestCube);
 	// console.log(`equals run time = ${equalTime}`);
 	// console.log(`open operations run time = ${openOperationsTime}`);
 	// console.log(`closed operations run time = ${closedOperationsTime}`);
@@ -208,8 +214,8 @@ function setNeighborScore(neighbor, current) {
 	let g = current.g + turnScore;
 	
 	// get out if it's too many moves
-	if (g > maxMoves)
-		return;
+	//if (g > maxMoves)
+	//	return;
 	
 	// check every element in the queue's underlying heap and compare it
 	// let addIt = true;
@@ -236,10 +242,21 @@ function setNeighborScore(neighbor, current) {
 	neighbor.g = g;
 	
 	// set h
-	neighbor.h = perfectScore - (neighbor.score - startScore);
-
+	//neighbor.h = perfectScore - (neighbor.score - startScore);
+	let distanceToEnd = perfectScore - neighbor.score;
+	let scorePerMove = -.26 * distanceToEnd + 35;
+	let movesToEnd = distanceToEnd / scorePerMove;
+	neighbor.h = movesToEnd;
+	
+	// using the dynamic formula
+	let scorePerMoveAtStart = -.26 * perfectScore + 35;
+	let N = perfectScore / scorePerMoveAtStart;
+	let w = g < N ? 1 - g/N : 0;
+	
 	// set f
-	neighbor.f = neighbor.g + neighbor.h * scoreWeight;
+	//neighbor.f = neighbor.g + neighbor.h * scoreWeight;
+	//neighbor.f = neighbor.g + neighbor.h;
+	neighbor.f = neighbor.g + (1+w) * neighbor.h;
 	
 	// set cameFrom
 	neighbor.previousRubik = current;
@@ -249,6 +266,7 @@ function setNeighborScore(neighbor, current) {
 }
 
 function getScore(current) {
+	// console.log("start");
 	let score = new Score();
 	for(let i=0; i<3; i++)
 		for(let j=0; j<3; j++)
@@ -258,6 +276,7 @@ function getScore(current) {
 	// we have to account for the lonePairs being erroneously doubled
 	score.lonePairs /= 2.0;
 	
+	// console.log("end");
 	return score;
 }
 
@@ -395,6 +414,9 @@ function getCubieScore(current, i, j, k) {
 			score.relativeOrientation++;
 		}
 	});
+	
+	// count the correct faces
+	// score.correctFaces = Cubie.correctFaces.call(cubie);
 	
 	return score;
 }

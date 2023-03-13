@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 const HALF_PI = Math.PI/2;
 const ZERO2D = new THREE.Vector2(0, 0);
+const NORMAL = new THREE.Vector3(1, 0, 0);
 
 
 class Cubie {
@@ -256,6 +257,52 @@ class Cubie {
 		return arr;
 	}
 	
+	static correctFaces() {
+		return Cubie[`${this.type}CorrectFaces`].call(this);
+	}
+	
+	static cornerCorrectFaces() {
+		
+		if (this.index.x == this.i-1 && 
+				this.index.y == this.j-1 && 
+				this.index.z == this.k-1 &&
+				this.normal.x == 1 &&
+				this.normal.y == 0 &&
+				this.normal.z == 0) 
+			return 3;
+		
+		// let planeNormal = new THREE.Vector3().copy(this.normal).cross(NORMAL);
+		// let projIndex = new THREE.Vector3().copy(this.index).projectOnPlane(planeNormal);
+		// let projIJK = new THREE.Vector3(this.i-1, this.j-1, this.k-1).projectOnPlane(planeNormal);
+		// let angle1 = this.normal.angleTo(NORMAL);
+		// let angle2 = projIndex.angleTo(projIJK);
+		// let diff = angle1 - angle2;
+		// console.log(diff);
+		// if (diff > -.001 && diff < .001)
+			// return 1;
+
+		// let cross = new THREE.Vector3(this.i-1, this.j-1, this.k-1).cross(this.index);
+		// let angle = cross.angleTo(this.normal);
+		// console.log(angle / .7853981633974484);
+		// let angle2 = new THREE.Vector3(this.i-1, this.j-1, this.k-1).angleTo(this.index);
+		// console.log(angle2, angle);
+		
+		let dot1 = new THREE.Vector3(this.i-1, this.j-1, this.k-1).dot(NORMAL);
+		let dot2 = this.index.dot(this.normal);
+		console.log(dot1 == dot2);
+		if (dot1 == dot2)
+			return 1;
+		
+		return 0;
+	}
+	
+	static edgeCorrectFaces() {
+		return 0;
+	}
+	
+	static centerCorrectFaces() {
+		return 0;
+	}
 }
 
 export {Cubie};
