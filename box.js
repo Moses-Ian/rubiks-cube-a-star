@@ -1,17 +1,13 @@
 /*
 Note to myself in the future because I WILL forget how static functions work:
 
-I might eventually try to display a lot of these on screen at once, and it is between 14% - 61% as memory intensive to use static functions.
-
-To use static functions, you can just say myBox.myFunction().
+To use static functions, you can't just say myBox.myFunction().
 You have to say Box.myFunction.call().
 
 In rubik.js, I do something slightly crazier.
 Remember that Box[myFunction] is equivalent to Box.myfunction, except that now you can use a variable, e.g.
 let myMysteriousFunction = 'myFunction';
 Box[myMysteriousFunction].call();
-
-With this setup, I can display 100 cubes and have them rotate only slightly faster than with instance methods.
 
 */
 
@@ -116,7 +112,6 @@ class Box {
 			points.push( this.normal.clone().add(this.pos) );
 			const normalGeometry = new THREE.BufferGeometry().setFromPoints( points );
 			this.line = new THREE.Line( normalGeometry, normalMaterial );
-			// console.log(this.line);
 		}
 		
 	}

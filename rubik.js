@@ -1,5 +1,3 @@
-// If I'm really concerned about memory usage, I can make this mostly static too
-
 import * as THREE from 'three';
 import { Box } from './box.js';
 import { Turn, turnFrames } from './turn.js';
@@ -9,7 +7,7 @@ const cube = new Array(cubeSize);
 const len = 10;
 const offset = (cubeSize - 1) / 2;
 const MILLIS_PER_FRAME = 25;
-const shuffleMoves = 10;
+const shuffleMoves = 8;
 
 // key dictionary
 const turns = new Object();	// for example:
@@ -46,6 +44,9 @@ class Rubik {
 
 		// create the turn object
 		this.currentTurn = new Turn();
+		
+		// the key for the previous shuffle
+		this.previousKey = null;
 	}
 	
 	addToScene(scene) {
@@ -83,7 +84,13 @@ class Rubik {
 
 	shuffle() {
 		let shuffleInterval = setInterval(() => {
-			let key = Object.keys(turns)[Math.floor(Math.random() * 12)];
+			let key;
+			console.log(`prev= ${this.previousKey}`);
+			do {
+				key	= Object.keys(turns)[Math.floor(Math.random() * 12)];
+				console.log(`key = ${key}`)
+			} while (key == this.previousKey);
+			this.previousKey = this.toggleCase(key);
 			this.initTurn(key);
 		}, turnFrames * MILLIS_PER_FRAME);
 		setTimeout(
@@ -91,6 +98,20 @@ class Rubik {
 			turnFrames * MILLIS_PER_FRAME * shuffleMoves
 		);
 	}	
+	
+	toggleCase(key) {
+		// handle , and <
+		if (key == ',')
+			return '<';
+		if (key == '<')
+			return ',';
+
+		// handle other keys
+		let lower = key.toLowerCase();
+		if (lower == key) 
+			return key.toUpperCase();
+		return lower;
+	}
 
 	executeMoves(moveList) {
 		moveList.forEach(({ previousTurn:move }, index) => 

@@ -50,7 +50,7 @@ class PriorityQueue {
 	
 	push(item) {
 		// create the node
-		let newNode = new Node(item, this.getValueOf(item));
+		let newNode = new _Node(item, this.getValueOf(item));
 		newNode.operations.push('push');
 		
 		// add the new node to the root list
@@ -119,21 +119,10 @@ class PriorityQueue {
 		return this._hashTable.forEach((value, key) => f.call(this, key));
 	}
 	
-	size() {
+	get size() {
 		return this._hashTable.size;
 	}
 	
-	find(item) {
-		// returns an item in the queue where a == b
-		
-	}
-
-	// returns an array of items that are close to being the smallest
-	// it's the root list, so it won't necessarily be the next N smallest
-	getClose() {
-		return this._rootList.map(node => node.item);
-	}
-
 	_cleanUp() {
 		let degreeArray = [];
 		
@@ -241,7 +230,7 @@ class PriorityQueue {
 	}
 }
 
-class Node {
+class _Node {
 	constructor(item, value) {
 		this.item = item;
 		this.value = value;

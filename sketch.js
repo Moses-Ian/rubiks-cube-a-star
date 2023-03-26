@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
 import * as dat from 'three/addons/dat.gui.module.js';
 import { Rubik } from './rubik.js';
-import { Turn, algorithm1, Algorithm } from './turn.js';
+import { Turn } from './turn.js';
+// import { algorithm1, Algorithm ) from './turn.js';
 import { solve, getScore, checkLocalMax, showThePath } from './solve.js';
 import { IdealizedRubik } from './IdealizedRubik.js';
 import { Score } from './score.js';
@@ -14,10 +15,12 @@ let oldScore = -1;
 // create html objects
 let score = new Score();
 let keys = Object.keys(score);
-keys.forEach(key => {
+let keyElements = keys.map(key => {
 	let p = document.createElement('p');
 	p.id = key;
+	p.style.display = 'none';
 	document.body.appendChild(p);
+	return p;
 });
 
 // create the renderer
@@ -58,13 +61,19 @@ const options = {
 		current.previousTurn = new Algorithm(algo).toTurnList('x', 'y');
 		debugger;
 		showThePath(rubik, current);
+	},
+	Debug: () => {
+		keyElements.forEach(p => {
+			p.style.display = p.style.display == 'none' ? 'block' : 'none'
+		});
 	}
 };
 
-gui.add(options,'Shuffle');
-gui.add(options,'Solve');
-gui.add(options, 'Algorithm1');
-gui.add(options, 'SolveAlgorithm1');
+gui.add(options, 'Shuffle');
+gui.add(options, 'Solve');
+// gui.add(options, 'Algorithm1');
+// gui.add(options, 'SolveAlgorithm1');
+gui.add(options, 'Debug');
 
 // define the animation loop
 function animate() {
@@ -77,12 +86,8 @@ function animate() {
 	let ideal = new IdealizedRubik(rubik)
 	let score = getScore(ideal);
 	ideal.score = score.score;
-	// ideal.addNeighbors();
 	ideal.neighbors.forEach(neighbor => neighbor.score = getScore(neighbor).score);
-	// score = checkLocalMax(ideal, score);
 	if (score.score != oldScore) {
-		// console.log(ideal);
-		// console.log(score);
 		keys.forEach(key => 
 			document.getElementById(key).innerHTML = `${key} = ${score[key]}`
 		);

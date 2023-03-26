@@ -55,7 +55,7 @@ class Cubie {
 		}	
 	}
 	
-	static turn_y(index) {
+	static turn_y() {
 		if (this.index.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -70,7 +70,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_c(index) {
+	static turn_c() {
 		if (this.index.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -85,7 +85,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_X(index) {
+	static turn_X() {
 		if (this.index.x == -1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -101,7 +101,7 @@ class Cubie {
 			
 	}
 	
-	static turn_Y(index) {
+	static turn_Y() {
 		if (this.index.y == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -116,7 +116,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_C(index) {
+	static turn_C() {
 		if (this.index.z == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -146,7 +146,7 @@ class Cubie {
 		}	
 	}
 	
-	static turn_b(index) {
+	static turn_b() {
 		if (this.index.y == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -161,7 +161,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_z(index) {
+	static turn_z() {
 		if (this.index.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, HALF_PI);
@@ -176,7 +176,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_A(index) {
+	static turn_A() {
 		if (this.index.x == 1) {
 			let temp = new THREE.Vector2(this.index.y, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -192,7 +192,7 @@ class Cubie {
 			
 	}
 	
-	static turn_B(index) {
+	static turn_B() {
 		if (this.index.y == -1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.z)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -207,7 +207,7 @@ class Cubie {
 		}
 	}
 	
-	static turn_Z(index) {
+	static turn_Z() {
 		if (this.index.z == 1) {
 			let temp = new THREE.Vector2(this.index.x, this.index.y)
 				.rotateAround(ZERO2D, -HALF_PI);
@@ -228,7 +228,6 @@ class Cubie {
 	}
 	
 	static getNeighbors(cube, x, y, z) {
-		// debugger;
 		let arr = [];
 		
 		if (x != 0) arr.push(cube[x-1][y][z]);
@@ -237,7 +236,6 @@ class Cubie {
 		if (y != 2) arr.push(cube[x][y+1][z]);
 		if (z != 0) arr.push(cube[x][y][z-1]);
 		if (z != 2) arr.push(cube[x][y][z+1]);
-		
 		
 		// remove the center squares
 		if (cube[x][y][z].type == 'edge') {
@@ -255,53 +253,6 @@ class Cubie {
 		}
 
 		return arr;
-	}
-	
-	static correctFaces() {
-		return Cubie[`${this.type}CorrectFaces`].call(this);
-	}
-	
-	static cornerCorrectFaces() {
-		
-		if (this.index.x == this.i-1 && 
-				this.index.y == this.j-1 && 
-				this.index.z == this.k-1 &&
-				this.normal.x == 1 &&
-				this.normal.y == 0 &&
-				this.normal.z == 0) 
-			return 3;
-		
-		// let planeNormal = new THREE.Vector3().copy(this.normal).cross(NORMAL);
-		// let projIndex = new THREE.Vector3().copy(this.index).projectOnPlane(planeNormal);
-		// let projIJK = new THREE.Vector3(this.i-1, this.j-1, this.k-1).projectOnPlane(planeNormal);
-		// let angle1 = this.normal.angleTo(NORMAL);
-		// let angle2 = projIndex.angleTo(projIJK);
-		// let diff = angle1 - angle2;
-		// console.log(diff);
-		// if (diff > -.001 && diff < .001)
-			// return 1;
-
-		// let cross = new THREE.Vector3(this.i-1, this.j-1, this.k-1).cross(this.index);
-		// let angle = cross.angleTo(this.normal);
-		// console.log(angle / .7853981633974484);
-		// let angle2 = new THREE.Vector3(this.i-1, this.j-1, this.k-1).angleTo(this.index);
-		// console.log(angle2, angle);
-		
-		let dot1 = new THREE.Vector3(this.i-1, this.j-1, this.k-1).dot(NORMAL);
-		let dot2 = this.index.dot(this.normal);
-		console.log(dot1 == dot2);
-		if (dot1 == dot2)
-			return 1;
-		
-		return 0;
-	}
-	
-	static edgeCorrectFaces() {
-		return 0;
-	}
-	
-	static centerCorrectFaces() {
-		return 0;
 	}
 }
 

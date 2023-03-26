@@ -1,8 +1,9 @@
-// I should REALLY consider making a lot of this static
+// The algorithm code is commented out because I put a lot of work into it, and it might be useful if I tackle it again in the future, but it doesn't help solve the cube :(
 
 import {Rubik, len} from './rubik.js';
 import {Cubie} from './cubie.js';
-import { Turn, TurnList, Algorithm, frontFace } from './turn.js';
+import { Turn, TurnList, frontFace } from './turn.js';
+// import { Algorithm } from './turn.js';
 
 // optional parameters
 const cubeSize = 3;
@@ -23,19 +24,18 @@ turns['P'] = new Turn('C'); // B'
 turns['U'] = new Turn('Z'); // F'
 
 // note: although algorithms have a nominative purpose, we're using them quite generally. The program will likely use a given algorithm for a totally unintended purpose
-const algorithms = [
-	new Algorithm('RLdrlFRLDDrlKRLDDrlfRLDrlk'),	// Z Perm -> switch two adjacent edges
-	// 2-Look OLL algorithms
-	new Algorithm('AyaY'),			// Line -> orients edges
-	new Algorithm('rURUrUUR'), 	// Sune -> orients corners
-	new Algorithm('rUURuruR'),	// Anti-Sune -> orients corners (so that it doesn't have to Sune 5 times)
-	new Algorithm('AyaYAyaYAyaY'),	// H -> it's basically just Line 3 times so idk
-	new Algorithm('aauaauaa'),			// Pi
-	new Algorithm('ayAbaYAB'),			// L
-	new Algorithm('xyaYXyAY'),			// T
-	new Algorithm('ayyA'),					// U 1
-	new Algorithm('ayya'),					// U 2
-]
+// const algorithms = [
+	// new Algorithm('RLdrlFRLDDrlKRLDDrlfRLDrlk'),	// Z Perm -> switch two adjacent edges
+	// new Algorithm('AyaY'),			// Line -> orients edges
+	// new Algorithm('rURUrUUR'), 	// Sune -> orients corners
+	// new Algorithm('rUURuruR'),	// Anti-Sune -> orients corners (so that it doesn't have to Sune 5 times)
+	// new Algorithm('AyaYAyaYAyaY'),	// H -> it's basically just Line 3 times so idk
+	// new Algorithm('aauaauaa'),			// Pi
+	// new Algorithm('ayAbaYAB'),			// L
+	// new Algorithm('xyaYXyAY'),			// T
+	// new Algorithm('ayyA'),					// U 1
+	// new Algorithm('ayya'),					// U 2
+// ]
 
 class IdealizedRubik {
 	constructor(rubik) {
@@ -81,7 +81,6 @@ class IdealizedRubik {
 		let solutionRubik = new IdealizedRubik();
 		
 		// parameters
-		// let cubeSize = cubeSize;
 		let offset = (cubeSize-1)/2;
 		
 		// create the cube
@@ -120,35 +119,25 @@ class IdealizedRubik {
 		return true;
 	}
 	
-	// checking priority, where we compare f values
-	static comparePriority(a, b) {
-		return a.f < b.f;
-	}
-	
 	// for each turn that can be made, create a new idealized rubik and add it to the list of neighbors
-	addNeighbors(depth) {
+	addNeighbors() {
 		// add the neighbors
 		this.neighbors = [];
 		Object.keys(turns).forEach(key => 
 			this.neighbors.push(this.fromTurn(turns[key]))
 		);
-		
-		// go deeper
-		depth--;
-		if (depth > 0)
-			this.neighbors.forEach(neighbor => neighbor.addNeighbors(depth));
 	}
 	
-	addNeighborsWithAlgorithms() {
-		this.neighbors = [];
+	// addNeighborsWithAlgorithms() {
+		// this.neighbors = [];
 		
-		Object.keys(frontFace).forEach(key => {
-			let [R, U] = key.split('');
+		// Object.keys(frontFace).forEach(key => {
+			// let [R, U] = key.split('');
 		
-			algorithms.forEach(key =>
-				this.neighbors.push(this.fromTurnList(key.toTurnList(R, U))));
-		});
-	}
+			// algorithms.forEach(key =>
+				// this.neighbors.push(this.fromTurnList(key.toTurnList(R, U))));
+		// });
+	// }
 	
 	// does not turn THIS cube
 	// it creates a new cube that is a copy of this one, turns and returns THAT one
@@ -162,22 +151,22 @@ class IdealizedRubik {
 	}
 	
 	// does not turn THIS cube
-	fromTurnList(turnList) {
-		let rubik = this.copy();
-		rubik.previousTurn = turnList;
+	// fromTurnList(turnList) {
+		// let rubik = this.copy();
+		// rubik.previousTurn = turnList;
 		
-		turnList.list.forEach(turn =>
-			rubik.forEach(`turn_${turn.direction}`)
-		);
+		// turnList.list.forEach(turn =>
+			// rubik.forEach(`turn_${turn.direction}`)
+		// );
 		
-		return rubik;
-	}
+		// return rubik;
+	// }
 	
-	forEach(fun, index) {
+	forEach(fun) {
 		for(let i=0; i<cubeSize; i++) 
 			for(let j=0; j<cubeSize; j++) 
 				for(let k=0; k<cubeSize; k++) 
-					Cubie[fun].call(this.cube[i][j][k], index);
+					Cubie[fun].call(this.cube[i][j][k]);
 	}
 	
 	copy() {

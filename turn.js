@@ -97,22 +97,11 @@ class TurnList {
 		list[0].algorithm = this.algo;
 		return list;
 	}
-	
-	// static shuffle(numberOfTurns) {
-		// let tl = new TurnList();
-		// tl.list = new Array(numberOfTurns);
-		// tl.list.forEach(item => {
-			// let index = Math.floor(Math.random() * directions.length);
-			// item = new Turn(directions[index]);
-		// });
-		
-	// }
 }
 
-class Algorithm {
+/*class Algorithm {
 	constructor(algo) {
 		// a string such as RLrl
-		// 'back' needs to be K or k (for negative)
 		this.algo = algo;
 	}
 	
@@ -167,7 +156,7 @@ const algorithm1 = new TurnList();
 algorithm1.push('x');
 algorithm1.push('y');
 algorithm1.push('z');
+*/
 
 
-
-export { Turn, TurnList, turnSpeed, turnFrames, algorithm1, Algorithm, frontFace };
+export { Turn, TurnList, turnSpeed, turnFrames, frontFace };//, algorithm1, Algorithm };

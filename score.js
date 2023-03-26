@@ -1,3 +1,5 @@
+// I couldn't figure out how to detect whether the faces are correct
+
 class Score {
 	constructor() {
 		this.score = 0;
@@ -11,7 +13,7 @@ class Score {
 		this.loneCubieClose = 0;
 		this.lonePairs = 0;
 		this.localMax = false;
-		this.correctFaces = 0;
+		// this.correctFaces = 0;
 	}
 	
 	merge(score) {
@@ -26,7 +28,7 @@ class Score {
 		this.loneCubieClose += score.loneCubieClose;
 		this.lonePairs += score.lonePairs;
 		this.localMax = this.localMax || score.localMax;
-		this.correctFaces += score.correctFaces;
+		// this.correctFaces += score.correctFaces;
 	}
 }
 
