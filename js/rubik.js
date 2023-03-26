@@ -85,10 +85,8 @@ class Rubik {
 	shuffle() {
 		let shuffleInterval = setInterval(() => {
 			let key;
-			console.log(`prev= ${this.previousKey}`);
 			do {
 				key	= Object.keys(turns)[Math.floor(Math.random() * 12)];
-				console.log(`key = ${key}`)
 			} while (key == this.previousKey);
 			this.previousKey = this.toggleCase(key);
 			this.initTurn(key);

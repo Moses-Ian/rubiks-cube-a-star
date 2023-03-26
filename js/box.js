@@ -17,7 +17,7 @@ Box[myMysteriousFunction].call();
 import * as THREE from 'three';
 import { turnSpeed } from './turn.js';
 
-const DRAW_NORMAL = true;
+const DRAW_NORMAL = false;
 
 const colors = [
 	new THREE.Color('white'), new THREE.Color('yellow'),

@@ -36,8 +36,8 @@ function solve(r) {
 	console.log('/----- solve -----/');
 	// console.log(`use algorithms= ${useAlgorithms}`);
 	//html nonsense
-	document.getElementById("done").style.display = "none";
-	document.getElementById("solving").style.display = "block";
+	// document.getElementById("done").style.display = "none";
+	// document.getElementById("solving").style.display = "block";
 	
 	let solveStart = performance.now();
 	let solveEnd;
@@ -136,8 +136,8 @@ function solve(r) {
 	console.log(bestCube);
 	
 	//html nonsense
-	document.getElementById("done").style.display = "block";
-	document.getElementById("solving").style.display = "none";
+	// document.getElementById("done").style.display = "block";
+	// document.getElementById("solving").style.display = "none";
 	
 	// attempt to force garbage collection
 	openSet = null;

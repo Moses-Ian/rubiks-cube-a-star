@@ -16,17 +16,17 @@ let oldScore = -1;
 let score = new Score();
 let keys = Object.keys(score);
 let keyElements = keys.map(key => {
-	let p = document.createElement('p');
-	p.id = key;
-	p.style.display = 'none';
-	document.body.appendChild(p);
-	return p;
+	let tr = document.createElement('tr');
+	tr.id = key;
+	tr.innerHTML = `<td>${key}</td><td></td>`;
+	document.getElementById('debug-view').appendChild(tr);
+	return tr;
 });
 
 // create the renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
-document.body.appendChild( renderer.domElement );
+document.getElementById('sketch').appendChild( renderer.domElement );
 
 // create the scene
 const scene = new THREE.Scene();
@@ -44,7 +44,7 @@ rubik.addToScene(scene);
 
 
 // gui
-const gui = new dat.GUI();
+// const gui = new dat.GUI();
 const options = { 
 	Shuffle: () => rubik.shuffle(),
 	Solve: () => solve(rubik),
@@ -63,17 +63,21 @@ const options = {
 		showThePath(rubik, current);
 	},
 	Debug: () => {
-		keyElements.forEach(p => {
-			p.style.display = p.style.display == 'none' ? 'block' : 'none'
-		});
+		let t = document.getElementById('debug-table');
+		t.style.display = t.style.display == 'none' ? 'table' : 'none';
 	}
 };
 
-gui.add(options, 'Shuffle');
-gui.add(options, 'Solve');
+// gui.add(options, 'Shuffle');
+// gui.add(options, 'Solve');
 // gui.add(options, 'Algorithm1');
 // gui.add(options, 'SolveAlgorithm1');
-gui.add(options, 'Debug');
+// gui.add(options, 'Debug');
+
+// using buttons instead
+document.getElementById('shuffle').addEventListener('click', options.Shuffle);
+document.getElementById('solve').addEventListener('click', options.Solve);
+document.getElementById('debug').addEventListener('click', options.Debug);
 
 // define the animation loop
 function animate() {
@@ -89,7 +93,7 @@ function animate() {
 	ideal.neighbors.forEach(neighbor => neighbor.score = getScore(neighbor).score);
 	if (score.score != oldScore) {
 		keys.forEach(key => 
-			document.getElementById(key).innerHTML = `${key} = ${score[key]}`
+			document.getElementById(key).lastChild.innerHTML = score[key]
 		);
 	}
 	oldScore = score.score;
