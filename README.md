@@ -8,7 +8,7 @@ This is my attempt to create an AI that would solve Rubik's Cubes. It uses A-sta
 
 You can visit the page here:
 
-
+https://moses-ian.github.io/rubiks-cube-a-star/
 
 ## Explanation of the Algorithm
 
