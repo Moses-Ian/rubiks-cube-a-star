@@ -56,7 +56,25 @@
 			<tbody id='debug-view' >
 			</tbody>
 		</table>
-		<div id='blurb'><p>hello</p></div>
+		<div id='blurb' class='content'>
+			<p>This is my attempt to create an AI that would solve Rubik's Cubes. It uses A-star to analyze and determine the best path.</p>
+			<p>The algorithm is A-star. This is a pathfinding algorithm that ranks nodes based on a heuristic, then follows the best-ranked nodes to attempt to find a path to the goal. I will only describe the heuristic here. You can read a detailed discription of the algorithm elsewhere.</p>
+			<p>The heuristic is based on the idea of scoring a cube based on how "close" it is to being solved. But what makes one cube "closer" to being solved than another? I have identified these key elements:</p>
+			<ul>
+				<li>- Cubies in the correct position</li>
+				<li>- Cubies in the correct position and orientation</li>
+				<li>- Cubies "close" to the correct position, i.e. one move away</li>
+				<li>- Cubies "near" the correct position, i.e. two moves away</li>
+				<li>- Cubies next to the correct neighbors</li>
+				<li>- Cubies with the correct orientation relative to their neighbor</li>
+				<li>- Cubies that are alone are bad</li>
+				<li>- Lone pairs of cubies are bad</li>
+			</ul>
+			<p>Each of these is given a score. The total of the scores is the total score for that state of the cube.</p>
+			<p>In a standard heuristic, the h value of a node would be directly related to the score. I found better performance when I used a dynamic h value. In essence, early moves are worth lots of points, but moves close to the final solution are worth few points. So as the score gets closer to a perfect score, I add extra weighting to the value of those moves. Think of it this way: if you're trying to find a path to a castle, but the castle is surrounded by mud, then even though each step toward the castle gets you a smaller distance, you're still on the right track and should weigh these steps more favorably.</p>
+			<p>The fundamental flaw here is that I'm using A-star incorrectly. Imagine you are in a mountain range, and you are trying to find a path to the tallest peak. Let's say that you know your current GPS location and the peak's GPS location. A-star can help you there.</p>
+			<p>Instead, you are in a mountain range in a fog. You don't know either location, but you know your altitude and the peak's altitude. You also know the slope of the area around you. You can make a reasonable guess that the peak is in the direction of the steepest slope upward, but that's not always true. While you're close, it's likely true, and so my algorithm can usually solve cubes that are up to 8 moves away from solved. But if you must go down one mountain to climb another, this method will fail. For the same reason, my solver fails.</p>
+		</div>
 
 
 
