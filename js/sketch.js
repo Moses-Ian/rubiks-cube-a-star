@@ -26,7 +26,7 @@ let keyElements = keys.map(key => {
 // create the renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( width, height );
-document.getElementById('sketch').appendChild( renderer.domElement );
+document.getElementById('sketch').insertBefore( renderer.domElement,  document.getElementById('progress') );
 
 // create the scene
 const scene = new THREE.Scene();
@@ -34,6 +34,8 @@ scene.background = new THREE.Color( 0xAAAAAA );
 
 // set camera position
 const camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+camera.position.x = 25;
+camera.position.y = 25;
 camera.position.z = 50;
 const orbit = new OrbitControls(camera, renderer.domElement);
 orbit.update();

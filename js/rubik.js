@@ -10,22 +10,69 @@ const MILLIS_PER_FRAME = 25;
 const shuffleMoves = 8;
 
 // key dictionary
-const turns = new Object();	// for example:
-turns['a'] = new Turn('x'); // L
-turns['e'] = new Turn('a'); // R
-turns[','] = new Turn('y'); // U
-turns['o'] = new Turn('b'); // D
-turns['p'] = new Turn('c'); // B
-turns['u'] = new Turn('z'); // F
-turns['A'] = new Turn('X'); // L'
-turns['E'] = new Turn('A'); // R'
-turns['<'] = new Turn('Y'); // U'
-turns['O'] = new Turn('B'); // D'
-turns['P'] = new Turn('C'); // B'
-turns['U'] = new Turn('Z'); // F'
+const turnsDvorak = new Object();	// for example:
+turnsDvorak['a'] = new Turn('x'); // L
+turnsDvorak['e'] = new Turn('a'); // R
+turnsDvorak[','] = new Turn('y'); // U
+turnsDvorak['o'] = new Turn('b'); // D
+turnsDvorak['p'] = new Turn('c'); // B
+turnsDvorak['u'] = new Turn('z'); // F
+turnsDvorak['A'] = new Turn('X'); // L'
+turnsDvorak['E'] = new Turn('A'); // R'
+turnsDvorak['<'] = new Turn('Y'); // U'
+turnsDvorak['O'] = new Turn('B'); // D'
+turnsDvorak['P'] = new Turn('C'); // B'
+turnsDvorak['U'] = new Turn('Z'); // F'
+
+const turnsQwerty = new Object();
+turnsQwerty['a'] = new Turn('x'); // L
+turnsQwerty['d'] = new Turn('a'); // R
+turnsQwerty['w'] = new Turn('y'); // U
+turnsQwerty['s'] = new Turn('b'); // D
+turnsQwerty['r'] = new Turn('c'); // B
+turnsQwerty['f'] = new Turn('z'); // F
+turnsQwerty['A'] = new Turn('X'); // L'
+turnsQwerty['D'] = new Turn('A'); // R'
+turnsQwerty['W'] = new Turn('Y'); // U'
+turnsQwerty['S'] = new Turn('B'); // D'
+turnsQwerty['R'] = new Turn('C'); // B'
+turnsQwerty['F'] = new Turn('Z'); // F'
+
+let turns;
+
+// handle the scheme switch
+const toggleSwitch = document.getElementById('checkbox');
+const instructionsElement = document.getElementById('control-instructions');
+
+const setScheme = scheme => {
+	if (scheme == 'dvorak') {
+		turns = turnsDvorak;
+		toggleSwitch.checked = true;
+		instructionsElement.innerHTML = 'Turn the sides with , a o e p u';
+		turns = turnsDvorak;
+		localStorage.setItem('control-scheme', 'dvorak');
+	} else {
+		turns = turnsQwerty;
+		toggleSwitch.checked = false;
+		instructionsElement.innerHTML = 'Turn the sides with w a s d r f';
+		turns = turnsQwerty;
+		localStorage.setItem('control-scheme', 'qwerty');
+	}
+}
+
+const switchControlScheme = e => {
+	if ( e.target.checked )
+		setScheme('dvorak');
+	else
+		setScheme('qwerty');
+};
+
+toggleSwitch.addEventListener('change', switchControlScheme);
+setScheme(localStorage.getItem('control-scheme'));
 
 class Rubik {
 	constructor() {
+		console.log(document.controlScheme);
 		// create the cube
 		this.cube = new Array(cubeSize);
 		for(let i=0; i<cubeSize; i++) {
