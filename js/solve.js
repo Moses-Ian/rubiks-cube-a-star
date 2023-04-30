@@ -1,5 +1,5 @@
 import { Rubik } from './rubik.js';
-import { IdealizedRubik } from './idealizedRubik.js';
+import { SimpleRubik } from './SimpleRubik.js';
 import { PriorityQueue } from './PriorityQueue.js';
 import { ClosedSet } from './ClosedSet.js';
 import { Cubie } from './cubie.js';
@@ -24,7 +24,7 @@ const scoreWeight = 1;	// bigger -> broader
 const maxMoves = 50;
 
 // important values
-const endRubik = IdealizedRubik.solution(cubeSize);
+const endRubik = SimpleRubik.solution(cubeSize);
 let perfectScore = getScore(endRubik).score;
 let openSet;
 let closedSet;
@@ -57,7 +57,7 @@ function solve(r) {
 	closedSet = new ClosedSet();
 	
 	// get started
-	let startRubik = new IdealizedRubik(r);
+	let startRubik = new SimpleRubik(r);
 	openSet.push(startRubik);
 	
 	// set a starting score -> you get no points for your starting position

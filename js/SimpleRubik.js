@@ -37,7 +37,7 @@ turns['U'] = new Turn('Z'); // F'
 	// new Algorithm('ayya'),					// U 2
 // ]
 
-class IdealizedRubik {
+class SimpleRubik {
 	constructor(rubik) {
 		// each cube has a value function
 		this.score = 0;		// better score == closer to ideal cube
@@ -78,7 +78,7 @@ class IdealizedRubik {
 	}
 	
 	static solution(cubeSize) {
-		let solutionRubik = new IdealizedRubik();
+		let solutionRubik = new SimpleRubik();
 		
 		// parameters
 		let offset = (cubeSize-1)/2;
@@ -170,7 +170,7 @@ class IdealizedRubik {
 	}
 	
 	copy() {
-		let rubik = new IdealizedRubik();
+		let rubik = new SimpleRubik();
 		let cubeSize = this.cubeSize;
 		let offset = this.offset;
 		
@@ -218,4 +218,4 @@ class IdealizedRubik {
 	
 }
 
-export {IdealizedRubik};
+export {SimpleRubik};

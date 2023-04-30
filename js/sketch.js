@@ -5,7 +5,7 @@ import { Rubik } from './rubik.js';
 import { Turn } from './turn.js';
 // import { algorithm1, Algorithm ) from './turn.js';
 import { solve, getScore, checkLocalMax, showThePath } from './solve.js';
-import { IdealizedRubik } from './IdealizedRubik.js';
+import { SimpleRubik } from './SimpleRubik.js';
 import { Score } from './score.js';
 
 let width = 400;
@@ -59,7 +59,7 @@ const options = {
 	},
 	SolveAlgorithm1: () => {
 		let algo = 'RLdrlFRLDDrlKRLDDrlfRLDrlk'.split('').reverse().join('');
-		let current = new IdealizedRubik(rubik);
+		let current = new SimpleRubik(rubik);
 		current.previousTurn = new Algorithm(algo).toTurnList('x', 'y');
 		debugger;
 		showThePath(rubik, current);
@@ -89,7 +89,7 @@ function animate() {
 	rubik.updateFrame();
 	
 	// get the score
-	let ideal = new IdealizedRubik(rubik)
+	let ideal = new SimpleRubik(rubik)
 	let score = getScore(ideal);
 	ideal.score = score.score;
 	ideal.neighbors.forEach(neighbor => neighbor.score = getScore(neighbor).score);
